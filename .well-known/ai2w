@@ -1,0 +1,25 @@
+{
+  "protocol": "ai2w",
+  "version": "0.1",
+  "site": {
+    "name": "AI2Web",
+    "url": "https://ai2web.dev",
+    "type": "content",
+    "description": "The open interoperability layer for AI-enabled websites.",
+    "languages": ["en"]
+  },
+  "identity": {
+    "legal_name": "AI2Web Foundation",
+    "terms": "https://ai2web.dev/"
+  },
+  "capabilities": {
+    "content": { "enabled": true, "endpoint": "/ai2w/content" },
+    "search": { "enabled": true, "endpoint": "/ai2w/search" }
+  },
+  "transports": {
+    "rest": { "enabled": true, "base": "/ai2w" },
+    "feeds": { "json_feed": "/sitemap.xml" }
+  },
+  "auth": { "methods": ["none"] },
+  "contact": { "support": "hello@ai2web.dev" }
+}

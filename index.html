@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI2Web - Make your website work with every AI, from one place</title>
+<meta name="description" content="Make your website work with every AI. AI2Web is the interoperability layer for AI-enabled sites - describe once; works across MCP, ACP, REST, GraphQL and more, from one place." />
+<link rel="canonical" href="https://ai2web.dev/" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="AI2Web" />
+<meta property="og:title" content="AI2Web - one place to make your website work with every AI" />
+<meta property="og:description" content="The interoperability layer for AI-enabled websites. Describe your site once; AI2Web exposes it across MCP, ACP, REST, GraphQL and future protocols - and gives you one place to validate, monitor and manage it." />
+<meta property="og:url" content="https://ai2web.dev/" />
+<meta property="og:image" content="https://ai2web.dev/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="AI2Web - make your website work with every AI. The interoperability layer for MCP, ACP, REST, GraphQL and more." />
+<meta property="og:locale" content="en_GB" />
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI2Web - make your website work with every AI" />
+<meta name="twitter:description" content="One interoperability layer for AI-enabled websites. Describe once; works across MCP, ACP, REST, GraphQL and future protocols." />
+<meta name="twitter:image" content="https://ai2web.dev/og-image.png" />
+
+<link rel="icon" type="image/png" sizes="96x96" href="/logo-96.png" />
+<link rel="apple-touch-icon" href="/logo-192.png" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": "https://ai2web.dev/#org", "name": "AI2Web Foundation",
+      "url": "https://ai2web.dev/", "logo": "https://ai2web.dev/logo-512.png",
+      "sameAs": ["https://github.com/ai2web-foundation"] },
+    { "@type": "WebSite", "@id": "https://ai2web.dev/#site", "name": "AI2Web",
+      "url": "https://ai2web.dev/", "publisher": { "@id": "https://ai2web.dev/#org" },
+      "inLanguage": "en" },
+    { "@type": "SoftwareApplication", "name": "AI2Web", "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Open interoperability layer that makes any website understandable and actionable to AI agents across multiple protocols (MCP, ACP, REST, GraphQL and more)." }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is AI2Web?", "acceptedAnswer": { "@type": "Answer", "text": "AI2Web is an open interoperability layer that makes any website understandable and actionable to AI agents. You describe your site's capabilities once, and AI2Web exposes them across AI assistants and protocols - MCP, ACP, REST, GraphQL and more - from a single place to validate, monitor and manage." } },
+    { "@type": "Question", "name": "Does AI2Web replace MCP or ACP?", "acceptedAnswer": { "@type": "Answer", "text": "No - it complements them. Protocols like MCP and ACP solve interoperability; AI2Web sits above them with one common capability model plus the validation, monitoring and management tooling that protocol specifications intentionally leave out. When a protocol wins, AI2Web simply generates it." } },
+    { "@type": "Question", "name": "Do I need OpenAI or Anthropic to support AI2Web?", "acceptedAnswer": { "@type": "Answer", "text": "No. The manifest, feeds and endpoints are useful today, and an MCP endpoint already works with existing Claude and ChatGPT connectors. AI2Web ships both the website side and an agent-side connector, so it doesn't depend on any vendor adopting it first." } },
+    { "@type": "Question", "name": "Can an AI buy or refund something without my approval?", "acceptedAnswer": { "@type": "Answer", "text": "No. AI2Web is secure by design. Reads such as order tracking happen instantly, but anything that moves money - purchases, refunds, cancellations - is high-risk and always returns a preview for you to approve before it runs, with an audit trail." } },
+    { "@type": "Question", "name": "What does AI2Web cost?", "acceptedAnswer": { "@type": "Answer", "text": "The protocol, specification and SDKs are free and open source (MIT for code, CC-BY 4.0 for the spec). Optional hosted endpoints, capability analytics and enterprise features are the commercial layer." } },
+    { "@type": "Question", "name": "Which platforms does AI2Web support?", "acceptedAnswer": { "@type": "Answer", "text": "Any website. There's a WordPress and WooCommerce plugin, SDKs for TypeScript, PHP, Python, Go and .NET, React bindings and a framework-free web component for plain JavaScript, and a framework-agnostic server that runs on Node.js or Cloudflare Workers." } },
+    { "@type": "Question", "name": "How do I make my website AI-ready?", "acceptedAnswer": { "@type": "Answer", "text": "Add an AI2Web capability manifest at /ai2w using the plugin or an SDK, then validate it to get your AI Readiness score. Agents discover it, negotiate capabilities, and can act - safely, with approval on anything sensitive." } }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#000; --panel:#0c0c0c; --panel2:#161616; --fg:#fff; --muted:#9a9a9a;
+    --line:#242424; --logo-invert:0;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  :root[data-theme="light"]{ --bg:#fff; --panel:#fafafa; --panel2:#f0f0f0; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; --logo-invert:1; }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:var(--fg)}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.1}
+  :focus-visible{outline:2px solid var(--fg);outline-offset:2px;border-radius:6px}
+
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);z-index:20}
+  .navbar{display:flex;align-items:center;gap:14px;height:64px}
+  .logo{display:flex;align-items:center;flex:0 0 auto}
+  .logo img{height:32px;width:auto;display:block;filter:invert(var(--logo-invert))}
+  .nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+  .nav a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none}
+  .nav a:hover{color:var(--fg)}
+  .icon-btn{background:transparent;border:1px solid var(--line);color:var(--fg);width:38px;height:38px;border-radius:9px;cursor:pointer;display:grid;place-items:center;font-size:15px;line-height:1}
+  .icon-btn:hover{border-color:var(--fg)}
+  .menu-btn{display:none;margin-left:auto}
+
+  .btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid var(--fg);text-decoration:none}
+  .btn.primary{background:var(--fg);color:var(--bg)}
+  .btn.primary:hover{opacity:.88;text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--fg);text-decoration:none}
+
+  .hero{padding:84px 0 52px;text-align:center}
+  .hero h1{font-size:clamp(32px,5.4vw,56px);margin:0 0 18px}
+  .hero p.sub{font-size:clamp(16px,2.3vw,21px);color:var(--muted);max-width:680px;margin:0 auto}
+  .badge{display:inline-block;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:24px}
+  .cta{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  section{padding:46px 0;border-top:1px solid var(--line)}
+  h2{font-size:26px;margin:0 0 8px}
+  .lead{color:var(--muted);margin:0 0 24px;max-width:680px}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:720px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+
+  /* fragmentation visual */
+  .frag{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;margin:6px 0 4px}
+  .portals{display:flex;flex-wrap:wrap;gap:8px;max-width:520px;justify-content:center}
+  .portals span{font-size:12.5px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:6px 10px}
+  .frag .arrow{font-size:22px;color:var(--muted)}
+  .frag .one{border:1px solid var(--fg);border-radius:12px;padding:14px 20px;font-weight:700}
+
+  .chain{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:14px;justify-content:center;margin:8px 0}
+  .chain .node{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .chain .node.lead{border-color:var(--fg);font-weight:700}
+  .chain .arrow{color:var(--muted)}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-family:var(--mono);font-size:13px;margin:0}
+  code{font-family:var(--mono)}
+  ul.ticks{list-style:none;padding:0;margin:0;display:grid;gap:8px;grid-template-columns:1fr 1fr}
+  @media(max-width:600px){ul.ticks{grid-template-columns:1fr}}
+  ul.ticks li{color:var(--muted);font-size:14px;display:flex;gap:9px}
+  ul.ticks b{color:var(--fg)}
+
+  /* validator */
+  .val{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .val textarea{width:100%;min-height:150px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;resize:vertical}
+  .val .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .val .row button{border-radius:9px;padding:10px 18px;font-weight:600;cursor:pointer;font-size:14px;border:1px solid var(--fg)}
+  .val .row .go{background:var(--fg);color:var(--bg)}
+  .val .row .sec{background:transparent;border-color:var(--line);color:var(--fg)}
+  .result{margin-top:18px;display:none}
+  .result.show{display:block}
+  .score{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+  .score .num{font-size:44px;font-weight:800;color:var(--fg)}
+  .score .tier{font-size:13px;color:var(--muted)}
+  .checks{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+  .checks li{display:flex;gap:9px;align-items:flex-start;font-size:14px}
+  .checks .sym{width:16px;flex:0 0 16px;text-align:center}
+  .checks .ok .sym,.checks .err .sym{color:var(--fg);font-weight:800}
+  .checks .warn{color:var(--muted)}
+  .checks .hint{color:var(--muted);font-size:12.5px}
+  .bar{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-bottom:16px;border:1px solid var(--line)}
+  .bar>span{display:block;height:100%;background:var(--fg)}
+  .kv{color:var(--muted);font-size:13px}
+
+  .faq details{border:1px solid var(--line);border-radius:12px;padding:0 16px;margin-bottom:10px;background:var(--panel)}
+  .faq summary{cursor:pointer;font-weight:600;font-size:15.5px;padding:16px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:'+';color:var(--muted);font-weight:400}
+  .faq details[open] summary::after{content:'–'}
+  .faq details p{margin:0 0 16px;color:var(--muted);font-size:14.5px;line-height:1.6}
+
+  footer{padding:44px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+  footer a{color:var(--fg)}
+
+  @media(max-width:720px){
+    .menu-btn{display:grid}
+    .nav{position:absolute;left:0;right:0;top:64px;margin:0;flex-direction:column;align-items:stretch;gap:0;
+         background:var(--bg);border-bottom:1px solid var(--line);padding:8px 20px 16px;
+         transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease}
+    .nav.open{transform:none;opacity:1;pointer-events:auto}
+    .nav a{padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px}
+    .nav a:last-of-type{border-bottom:0}
+  }
+</style>
+</head>
+<body id="top">
+<header><div class="wrap navbar">
+  <a class="logo" href="#top" aria-label="AI2Web home"><img src="/ai2web-logo-white.svg" width="53" height="32" alt="AI2Web" fetchpriority="high" decoding="async" /></a>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="#why">Why</a>
+    <a href="#how">How</a>
+    <a href="#one-place">One place</a>
+    <a href="#support">Support</a>
+    <a href="#validator">Validator</a>
+    <a href="https://github.com/ai2web-foundation">GitHub</a>
+  </nav>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle black / white theme" title="Toggle theme">☀</button>
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+</div></header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="badge">Open protocol · <code>ai2w</code> · one layer for every AI</span>
+    <h1>Make your website work with every AI - from one place.</h1>
+    <p class="sub">AI2Web is the interoperability layer for AI-enabled websites. Describe your site once; it works across AI assistants and protocols - MCP, ACP, REST, GraphQL and whatever comes next - with a single place to validate, monitor and manage it.</p>
+    <div class="cta">
+      <a class="btn primary" href="#validator">Check your AI readiness</a>
+      <a class="btn ghost" href="https://github.com/ai2web-foundation">Read the spec</a>
+    </div>
+  </div>
+
+  <section id="why" aria-labelledby="why-h">
+    <h2 id="why-h">Don't repeat the Search Console mistake</h2>
+    <p class="lead">Website owners already juggle Google Search Console, Bing Webmaster Tools, Yandex, Baidu, social sharing tools and a dozen validators - each with its own portal and rules. Most business owners never learned any of them. The AI era is heading the same way, with MCP, ACP, A2A, discovery manifests, auth profiles and negotiation. It doesn't have to.</p>
+    <div class="frag">
+      <div class="portals">
+        <span>MCP</span><span>ACP</span><span>A2A</span><span>discovery manifests</span><span>auth profiles</span><span>negotiation</span><span>product feeds</span><span>per-assistant dashboards</span>
+      </div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="one">AI2Web</div>
+    </div>
+    <p class="lead" style="margin-top:22px"><b style="color:var(--fg)">Protocols solve interoperability. AI2Web solves usability, adoption, governance and operations.</b> It's to AI protocols what Search Console should have been for search: one unified layer instead of a dozen fragmented portals.</p>
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">Describe once. Works everywhere.</h2>
+    <p class="lead">The web was built for humans. Agents shouldn't have to scrape HTML and guess forms. You declare your capabilities once; AI2Web exposes them through whichever protocols an assistant understands.</p>
+    <div class="grid g3">
+      <div class="card"><h3>Describe once</h3><p>One capability manifest for content, commerce, actions, events and auth. No per-assistant rebuilds.</p></div>
+      <div class="card"><h3>Generate everything</h3><p>AI2Web emits MCP, ACP, REST, GraphQL, OpenAPI and feeds from one source of truth. New protocol? Add an adapter, not a rewrite.</p></div>
+      <div class="card"><h3>Works today</h3><p>Backend-first and API-driven. An MCP endpoint works in Claude and ChatGPT connectors right now, with no vendor adoption required.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Any stack, including plain JavaScript and React</h3>
+      <p>Use AI2Web from TypeScript, plain JavaScript or React, plus PHP, Python, Go, .NET and WordPress. The JavaScript packages ship as standard ESM with bundled types, so they run unchanged in JS. <code>@ai2web/react</code> adds hooks and an embeddable AI Readiness badge, and a build-free <code>&lt;ai2w-badge&gt;</code> web component drops into any HTML page with no bundler.</p>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Greener by design</h3>
+      <p>Making every AI scrape and render a full web page wastes compute and energy, and AI already consumes a great deal of it. A shared capability layer sends a few kilobytes of structured data instead of megabytes of HTML: less parsing, less bandwidth, less energy. It is the green-internet argument applied to AI, where every request that avoids rendering a page is compute and carbon saved.</p>
+    </div>
+  </section>
+
+  <section id="one-place" aria-labelledby="op-h">
+    <h2 id="op-h">One place to manage your AI presence</h2>
+    <p class="lead">Configure your AI capabilities once, and AI2Web keeps them correctly exposed, validated and monitored across the evolving ecosystem - whichever protocols or assistants win.</p>
+    <ul class="ticks">
+      <li>✓ <span><b>Enable</b> AI capabilities in minutes</span></li>
+      <li>✓ <span><b>Validate</b> your implementation and score it</span></li>
+      <li>✓ <span><b>Monitor</b> compatibility across assistants</span></li>
+      <li>✓ <span><b>Understand</b> which capabilities agents actually use</span></li>
+      <li>✓ <span><b>Receive</b> recommendations on what to expose next</span></li>
+      <li>✓ <span><b>Manage</b> everything from one dashboard, not a dozen portals</span></li>
+    </ul>
+  </section>
+
+  <section id="support" aria-labelledby="support-h">
+    <h2 id="support-h">Support that just works - the user only has to ask</h2>
+    <p class="lead">The highest-value moment is after the sale. A customer asks their assistant; AI2Web handles order tracking, returns and refunds - via MCP, a checkout transport (ACP), or the brand's own agent. Money-moving actions always ask the user to confirm first.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>“Where's my order?”</h3>
+        <p><b style="color:var(--fg)">→</b> AI2Web calls <code>track_order</code> (a read, authorised to the user's account) and answers instantly - no confirmation needed.<br/><br/>
+        <span class="kv">“DPD - out for delivery, arriving tomorrow ~12:00.”</span></p>
+      </div>
+      <div class="card">
+        <h3>“They arrived damaged - refund please.”</h3>
+        <p><b style="color:var(--fg)">→</b> <code>report_issue</code> logs it with the photo, then <code>request_refund</code> - a high-risk action - returns a <b style="color:var(--fg)">preview</b> for the user to approve. Only after approval does it refund, with an audit reference.<br/><br/>
+        <span class="kv">“Refund £20.00 to original payment? ✓ Approved · audit aud_01H8”</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="model" aria-labelledby="model-h">
+    <h2 id="model-h">The capability model is the product</h2>
+    <p class="lead">Everything hangs off one primitive. The framework generates from it, the discovery network indexes by it, the analytics measure against it.</p>
+    <div class="chain">
+      <span class="node lead">Capability Model</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="node">Framework</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="node">Discovery Network</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="node">Analytics</span>
+    </div>
+  </section>
+
+  <section id="protocols" aria-labelledby="p-h">
+    <h2 id="p-h">Complements every protocol - never competes</h2>
+    <p class="lead">Like a browser supporting HTTP/1.1, HTTP/2, HTTP/3, WebSockets and WebRTC behind one experience, AI2Web abstracts agent protocols behind one capability model. It defines the model above the transports and negotiates which to use - so any protocol's success is a tailwind.</p>
+    <div class="grid g2">
+      <pre>AI Assistant
+     │
+     ▼
+  AI2Web
+     ├── MCP
+     ├── ACP
+     ├── REST APIs
+     ├── GraphQL
+     ├── OpenAPI
+     ├── WordPress / CMS abilities
+     ├── Webhooks
+     └── Future protocols</pre>
+      <div class="card"><h3>It's not "the MCP for websites"</h3><p>AI2Web is the interoperability layer for AI-enabled websites - a common discovery and capability model across protocols, plus the governance, analytics, validation and tooling that protocol specs intentionally leave out. Discovery is pluggable too: if a neutral standard emerges, AI2Web is carried by it rather than competing.</p></div>
+    </div>
+  </section>
+
+  <section id="validator" aria-labelledby="v-h">
+    <h2 id="v-h">AI Readiness Validator</h2>
+    <p class="lead">Paste an AI2Web manifest (or load an example). Scored exactly like <code>npx&nbsp;ai2web&nbsp;validate</code> - the same logic that ships in the SDKs.</p>
+    <div class="val">
+      <label for="input" class="kv">Manifest JSON</label>
+      <textarea id="input" spellcheck="false" placeholder='Paste your /ai2w manifest JSON here…'></textarea>
+      <div class="row">
+        <button class="go" type="button" onclick="runValidate()">Validate</button>
+        <button class="sec" type="button" onclick="loadExample()">Load example</button>
+        <span class="kv" id="hint"></span>
+      </div>
+      <div class="result" id="result">
+        <div class="score"><div class="num" id="score">-</div><div class="tier" id="tier"></div></div>
+        <div class="bar"><span id="barfill" style="width:0%"></span></div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">Frequently asked questions</h2>
+    <div class="faq">
+      <details>
+        <summary>What is AI2Web?</summary>
+        <p>AI2Web is an open interoperability layer that makes any website understandable and actionable to AI agents. You describe your site's capabilities once, and AI2Web exposes them across AI assistants and protocols - MCP, ACP, REST, GraphQL and more - from a single place to validate, monitor and manage.</p>
+      </details>
+      <details>
+        <summary>Does AI2Web replace MCP or ACP?</summary>
+        <p>No - it complements them. Protocols like MCP and ACP solve interoperability; AI2Web sits above them with one common capability model plus the validation, monitoring and management tooling that protocol specifications intentionally leave out. When a protocol wins, AI2Web simply generates it.</p>
+      </details>
+      <details>
+        <summary>Do I need OpenAI or Anthropic to support AI2Web?</summary>
+        <p>No. The manifest, feeds and endpoints are useful today, and an MCP endpoint already works with existing Claude and ChatGPT connectors. AI2Web ships both the website side and an agent-side connector, so it doesn't depend on any vendor adopting it first.</p>
+      </details>
+      <details>
+        <summary>Can an AI buy or refund something without my approval?</summary>
+        <p>No. AI2Web is secure by design. Reads such as order tracking happen instantly, but anything that moves money - purchases, refunds, cancellations - is high-risk and always returns a preview for you to approve before it runs, with an audit trail.</p>
+      </details>
+      <details>
+        <summary>What does AI2Web cost?</summary>
+        <p>The protocol, specification and SDKs are free and open source (MIT for code, CC-BY 4.0 for the spec). Optional hosted endpoints, capability analytics and enterprise features are the commercial layer.</p>
+      </details>
+      <details>
+        <summary>Which platforms does AI2Web support?</summary>
+        <p>Any website. There's a WordPress and WooCommerce plugin, SDKs for TypeScript, PHP, Python, Go and .NET, React bindings and a framework-free web component for plain JavaScript, and a framework-agnostic server that runs on Node.js or Cloudflare Workers.</p>
+      </details>
+      <details>
+        <summary>How do I make my website AI-ready?</summary>
+        <p>Add an AI2Web capability manifest at <code>/ai2w</code> using the plugin or an SDK, then validate it to get your AI Readiness score. Agents discover it, negotiate capabilities, and can act - safely, with approval on anything sensitive.</p>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">
+  Created by <a href="https://rolandfarkas.com" rel="author">Roland</a> @ <a href="https://polarize.ltd">Polarize Ltd</a><br/>
+  AI2Web Foundation · protocol &amp; spec CC-BY 4.0 · code MIT · <a href="https://ai2web.dev">ai2web.dev</a> · <a href="https://github.com/ai2web-foundation">github.com/ai2web-foundation</a>
+</div></footer>
+
+<script>
+(function(){
+  var saved = localStorage.getItem('ai2w-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  var btn = document.getElementById('themeBtn');
+  function glyph(){ btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; }
+  glyph();
+  btn.addEventListener('click', function(){
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ai2w-theme', next); glyph();
+  });
+})();
+(function(){
+  var nav = document.getElementById('nav'), btn = document.getElementById('menuBtn');
+  btn.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? '✕' : '☰';
+  });
+  nav.addEventListener('click', function(e){ if(e.target.tagName==='A'){ nav.classList.remove('open'); btn.textContent='☰'; btn.setAttribute('aria-expanded','false'); } });
+})();
+
+// Web port of @ai2web/core validateManifest (spec §9/§11) - same algorithm as the SDKs.
+function validate(m){
+  var errors=[], checks=[];
+  var has=function(v){return v===true||(v&&typeof v==='object'&&v.enabled===true)};
+  var cap=function(n){return m.capabilities&&m.capabilities[n]};
+  if(m.protocol!=='ai2w')errors.push("protocol must be 'ai2w'");
+  if(!/^\d+\.\d+(\.\d+)?$/.test(String(m.version==null?'':m.version)))errors.push('version missing/invalid');
+  ['name','url','type'].forEach(function(k){if(!(m.site&&m.site[k]))errors.push('site.'+k+' missing')});
+  if(!m.capabilities||!Object.keys(m.capabilities).length)errors.push('capabilities empty');
+  var actionsExist=has(cap('actions'))||(Array.isArray(m.actions)&&m.actions.length>0)||['commerce','booking'].some(function(c){return has(cap(c))});
+  var score=0;
+  var add=function(ok,pts,label,hint){checks.push({ok:ok,label:label,hint:ok?null:hint});if(ok)score+=pts};
+  add(errors.length===0,30,'Valid discovery manifest','fix errors');
+  add(has(cap('content')),6,'Content','expose content module');
+  add(has(cap('commerce'))||has(cap('booking'))||has(cap('services')),6,'Products / services / booking','expose a commerce/services/booking module');
+  add(has(cap('search')),4,'Search','add a search capability');
+  add(actionsExist,5,'Actions','declare actions');
+  add(has(cap('events')),6,'Events / subscriptions','publish subscribable events');
+  add(!!(m.agent_service&&m.agent_service.enabled),4,'Agent service (A2A)','expose /ai2w/agent');
+  var commerce=cap('commerce');
+  add(!has(commerce)||(commerce&&commerce.checkout===true),4,'Checkout','commerce present but checkout missing');
+  add(!!(m.transports&&m.transports.mcp&&m.transports.mcp.enabled===true),8,'MCP transport','expose an MCP endpoint');
+  add(!!(m.transports&&((m.transports.rest&&m.transports.rest.enabled)||m.transports.feeds)),4,'REST / feeds','expose REST or feeds');
+  var oauthOk=!!(m.auth&&Array.isArray(m.auth.methods)&&m.auth.methods.indexOf('oauth2')>-1&&m.auth.oauth2&&m.auth.oauth2.pkce===true);
+  var consentDeclared=!!(m.consent&&m.consent.requires_user_approval_for&&m.consent.requires_user_approval_for.length);
+  add(!actionsExist||oauthOk,8,'OAuth2 + PKCE','protected actions need oauth2+pkce');
+  add(!actionsExist||consentDeclared,7,'Consent declared','declare consent for sensitive actions');
+  add(!!m.identity,4,'Identity','add identity (legal_name, policies)');
+  add(!!m.contact,4,'Contact','add support/security contact');
+  score=Math.min(100,score);
+  var basic=errors.length===0;
+  var standard=basic&&!!m.transports&&(!actionsExist||consentDeclared)&&!!m.contact;
+  var enterprise=standard&&!!m.identity&&!!m.auth&&!!m.rate_limits;
+  var tier=enterprise?'Enterprise':standard?'Standard':basic?'Basic':'Invalid';
+  return {errors:errors,checks:checks,score:score,tier:tier};
+}
+function runValidate(){
+  var hint=document.getElementById('hint'), m;
+  try{m=JSON.parse(document.getElementById('input').value)}catch(e){hint.textContent='⚠ invalid JSON';return}
+  hint.textContent='';
+  var r=validate(m);
+  document.getElementById('score').textContent=r.score+'/100';
+  document.getElementById('tier').textContent='Tier: '+r.tier+(r.errors.length?' · '+r.errors.length+' error(s)':'');
+  document.getElementById('barfill').style.width=r.score+'%';
+  document.getElementById('checks').innerHTML=
+    r.errors.map(function(e){return '<li class="err"><span class="sym">✗</span> '+e+'</li>'}).join('')
+    + r.checks.filter(function(c){return c.label!=='Valid discovery manifest'}).map(function(c){
+      return c.ok?'<li class="ok"><span class="sym">✓</span> '+c.label+'</li>'
+                 :'<li class="warn"><span class="sym">⚠</span> '+c.label+' <span class="hint">- '+c.hint+'</span></li>';}).join('');
+  document.getElementById('result').classList.add('show');
+}
+function loadExample(){
+  document.getElementById('input').value=JSON.stringify({
+    protocol:'ai2w',version:'0.1',
+    site:{name:'Example Store',url:'https://store.example.com',type:'ecommerce'},
+    identity:{legal_name:'Example Store Ltd'},
+    capabilities:{content:true,commerce:{enabled:true,endpoint:'/ai2w/products',checkout:true},search:{enabled:true},events:{enabled:true},actions:{enabled:true}},
+    transports:{rest:{enabled:true,base:'/ai2w'},mcp:{enabled:true,endpoint:'/ai2w/mcp'},acp:{enabled:true}},
+    auth:{methods:['none','oauth2'],oauth2:{pkce:true,scopes:['checkout']}},
+    consent:{requires_user_approval_for:['purchase']},
+    events:{endpoint:'/ai2w/events',types:['order.shipped','price.drop']},
+    contact:{support:'help@store.example.com'}
+  },null,2);
+  runValidate();
+}
+</script>
+</body>
+</html>

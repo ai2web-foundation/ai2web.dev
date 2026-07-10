@@ -1,0 +1,30 @@
+# Cloudflare Pages headers for ai2web.dev
+
+# Serve the dogfood manifest as JSON with open CORS (it has no file extension).
+/.well-known/ai2w
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=300
+
+# Long-cache immutable assets.
+/ai2web-logo-white.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=31536000, immutable
+/ai2web-logo-black.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=31536000, immutable
+/logo-96.png
+  Cache-Control: public, max-age=31536000, immutable
+/logo-192.png
+  Cache-Control: public, max-age=31536000, immutable
+/logo-512.png
+  Cache-Control: public, max-age=31536000, immutable
+/og-image.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# Baseline security headers for everything.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
