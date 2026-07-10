@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Documentation - AI2Web</title>
+<meta name="description" content="AI2Web developer documentation: describe your site once with a capability manifest at /ai2w, validate it, and expose it to AI agents across MCP, ACP, REST, GraphQL and more. Endpoints, modules, actions, SDKs and security." />
+<link rel="canonical" href="https://ai2web.dev/docs" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="AI2Web" />
+<meta property="og:title" content="AI2Web Documentation" />
+<meta property="og:description" content="Describe your site once at /ai2w and expose it to every AI. Endpoints, capability modules, actions, SDKs and the security model." />
+<meta property="og:url" content="https://ai2web.dev/docs" />
+<meta property="og:image" content="https://ai2web.dev/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en_GB" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI2Web Documentation" />
+<meta name="twitter:description" content="Describe your site once at /ai2w and expose it to every AI. Endpoints, modules, actions, SDKs and security." />
+<meta name="twitter:image" content="https://ai2web.dev/og-image.png" />
+
+<link rel="icon" type="image/png" sizes="96x96" href="/logo-96.png" />
+<link rel="apple-touch-icon" href="/logo-192.png" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": "https://ai2web.dev/#org", "name": "AI2Web Foundation",
+      "url": "https://ai2web.dev/", "logo": "https://ai2web.dev/logo-512.png",
+      "sameAs": ["https://github.com/ai2web-foundation"] },
+    { "@type": "TechArticle", "headline": "AI2Web Documentation",
+      "url": "https://ai2web.dev/docs", "inLanguage": "en",
+      "publisher": { "@id": "https://ai2web.dev/#org" },
+      "description": "Developer documentation for the AI2Web (ai2w) protocol: manifest, endpoints, capability modules, actions, SDKs and security." },
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ai2web.dev/" },
+      { "@type": "ListItem", "position": 2, "name": "Documentation", "item": "https://ai2web.dev/docs" }
+    ]}
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#000; --panel:#0c0c0c; --panel2:#161616; --fg:#fff; --muted:#9a9a9a;
+    --line:#242424; --logo-invert:0;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  :root[data-theme="light"]{ --bg:#fff; --panel:#fafafa; --panel2:#f0f0f0; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; --logo-invert:1; }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:var(--fg)}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.15}
+  :focus-visible{outline:2px solid var(--fg);outline-offset:2px;border-radius:6px}
+
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);z-index:20}
+  .navbar{display:flex;align-items:center;gap:14px;height:64px}
+  .logo{display:flex;align-items:center;flex:0 0 auto}
+  .logo img{height:32px;width:auto;display:block;filter:invert(var(--logo-invert))}
+  .nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+  .nav a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none}
+  .nav a:hover,.nav a[aria-current]{color:var(--fg)}
+  .icon-btn{background:transparent;border:1px solid var(--line);color:var(--fg);width:38px;height:38px;border-radius:9px;cursor:pointer;display:grid;place-items:center;font-size:15px;line-height:1}
+  .icon-btn:hover{border-color:var(--fg)}
+  .menu-btn{display:none;margin-left:auto}
+
+  .btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid var(--fg);text-decoration:none}
+  .btn.primary{background:var(--fg);color:var(--bg)}
+  .btn.primary:hover{opacity:.88;text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--fg);text-decoration:none}
+
+  .pagehead{padding:52px 0 8px}
+  .pagehead h1{font-size:clamp(30px,4.6vw,44px);margin:0 0 12px}
+  .pagehead p{font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:680px;margin:0}
+  .badge{display:inline-block;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:18px}
+
+  section{padding:34px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  h2{font-size:23px;margin:0 0 10px;scroll-margin-top:80px}
+  h3{font-size:16px;margin:22px 0 8px}
+  section{scroll-margin-top:80px}
+  p{margin:0 0 14px;color:var(--muted)}
+  p b,li b{color:var(--fg)}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:700px}
+  ol,ul{color:var(--muted);margin:0 0 14px;padding-left:20px}
+  li{margin:6px 0}
+
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-family:var(--mono);font-size:13px;margin:0 0 14px;line-height:1.5}
+  code{font-family:var(--mono)}
+  p code,li code,td code,th code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:12.5px;color:var(--fg)}
+
+  table{border-collapse:collapse;width:100%;font-size:14px;margin:0 0 14px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;color:var(--muted)}
+  th{background:var(--panel2);font-weight:600;color:var(--fg);white-space:nowrap}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--fg)}
+  .card p{margin:0;font-size:14px}
+
+  .toc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:22px 0 6px}
+  .toc strong{font-size:13px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+  .toc ul{list-style:none;margin:10px 0 0;padding:0;columns:2;column-gap:24px}
+  @media(max-width:600px){.toc ul{columns:1}}
+  .toc a{color:var(--muted);text-decoration:none;font-size:14px;display:block;padding:3px 0}
+  .toc a:hover{color:var(--fg)}
+
+  footer{padding:44px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+  footer a{color:var(--fg)}
+
+  @media(max-width:720px){
+    .menu-btn{display:grid}
+    .nav{position:absolute;left:0;right:0;top:64px;margin:0;flex-direction:column;align-items:stretch;gap:0;
+         background:var(--bg);border-bottom:1px solid var(--line);padding:8px 20px 16px;
+         transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease}
+    .nav.open{transform:none;opacity:1;pointer-events:auto}
+    .nav a{padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px}
+    .nav a:last-of-type{border-bottom:0}
+  }
+</style>
+</head>
+<body id="top">
+<header><div class="wrap navbar">
+  <a class="logo" href="/" aria-label="AI2Web home"><img src="/ai2web-logo-white.svg" width="53" height="32" alt="AI2Web" fetchpriority="high" decoding="async" /></a>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="/#why">Why</a>
+    <a href="/#how">How</a>
+    <a href="/docs" aria-current="page">Docs</a>
+    <a href="/#validator">Validator</a>
+    <a href="https://github.com/ai2web-foundation">GitHub</a>
+  </nav>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle black / white theme" title="Toggle theme">☀</button>
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+</div></header>
+
+<main class="wrap">
+
+  <div class="pagehead">
+    <span class="badge">Documentation · protocol <code>ai2w</code> · v0.1</span>
+    <h1>Make your site understandable to every AI.</h1>
+    <p>Describe your website once with a capability manifest at <code>/ai2w</code>. AI2Web exposes it across MCP, ACP, REST, GraphQL and more, with discovery, validation and a safe action model built in. This page is the practical guide; the normative detail lives in the <a href="https://github.com/ai2web-foundation/ai2web-spec">specification</a>.</p>
+  </div>
+
+  <div class="toc" aria-label="On this page">
+    <strong>On this page</strong>
+    <ul>
+      <li><a href="#start">Quick start</a></li>
+      <li><a href="#manifest">The manifest</a></li>
+      <li><a href="#discovery">Discovery &amp; endpoints</a></li>
+      <li><a href="#capabilities">Capability modules</a></li>
+      <li><a href="#negotiation">Negotiation</a></li>
+      <li><a href="#actions">Actions, risk &amp; approval</a></li>
+      <li><a href="#transports">Transports &amp; adapters</a></li>
+      <li><a href="#sdks">SDKs &amp; install</a></li>
+      <li><a href="#assistants">Connect Claude &amp; ChatGPT</a></li>
+      <li><a href="#tiers">Tiers &amp; scoring</a></li>
+      <li><a href="#security">Security model</a></li>
+      <li><a href="#spec">Spec &amp; RFCs</a></li>
+    </ul>
+  </div>
+
+  <section id="start">
+    <h2>Quick start</h2>
+    <p class="lead">Four steps take a site from invisible to AI-ready.</p>
+    <ol>
+      <li>Publish a capability <b>manifest</b> at <code>/ai2w</code> (by hand, via an SDK, or the WordPress plugin).</li>
+      <li>Add the required <b>discovery anchor</b> at <code>/.well-known/ai2w</code> pointing to it.</li>
+      <li><b>Validate</b> it and get your AI Readiness Score out of 100.</li>
+      <li>Agents <b>discover</b> the manifest, <b>negotiate</b> a capability set, and can <b>act</b>, with approval on anything sensitive.</li>
+    </ol>
+    <p>Validate any site or manifest from the command line, or in the browser on the <a href="/#validator">home page</a>:</p>
+    <pre>npx -p @ai2web/validator ai2web validate https://your-site.com
+npx -p @ai2web/validator ai2web validate ./manifest.json</pre>
+  </section>
+
+  <section id="manifest">
+    <h2>The manifest</h2>
+    <p class="lead">One JSON document describes what your site is and can do. It is the single source of truth every transport is generated from.</p>
+    <pre>{
+  "protocol": "ai2w",
+  "version": "0.1",
+  "site": { "name": "Example Store", "url": "https://store.example.com", "type": "ecommerce" },
+  "capabilities": {
+    "content": true,
+    "commerce": { "enabled": true, "endpoint": "/ai2w/products", "checkout": true },
+    "search":   { "enabled": true, "endpoint": "/ai2w/search" },
+    "actions":  { "enabled": true, "endpoint": "/ai2w/actions" }
+  },
+  "transports": {
+    "rest": { "enabled": true, "base": "/ai2w" },
+    "mcp":  { "enabled": true, "endpoint": "/ai2w/mcp" },
+    "acp":  { "enabled": true }
+  },
+  "auth":    { "methods": ["none", "oauth2"], "oauth2": { "pkce": true, "scopes": ["checkout"] } },
+  "consent": { "requires_user_approval_for": ["purchase", "payment"] },
+  "actions": [
+    { "name": "track_order", "id": "order.track", "method": "GET",
+      "endpoint": "/ai2w/actions/track-order", "requires_auth": true,
+      "requires_user_approval": false, "risk": "medium", "input_schema": { "type": "object" } }
+  ],
+  "contact": { "support": "help@store.example.com" }
+}</pre>
+    <p>Build it in code instead of by hand:</p>
+    <pre>import { ai2web } from "@ai2web/core";
+
+const manifest = ai2web({ name: "Example Store", url: "https://store.example.com", type: "ecommerce" })
+  .capability("content")
+  .capability("commerce", { checkout: true })
+  .action({ name: "track_order", id: "order.track", method: "GET",
+            endpoint: "/ai2w/actions/track-order", requires_auth: true,
+            requires_user_approval: false, risk: "medium", input_schema: { type: "object" } })
+  .consent({ requires_user_approval_for: ["purchase", "payment"] })
+  .build();</pre>
+  </section>
+
+  <section id="discovery">
+    <h2>Discovery &amp; endpoints</h2>
+    <p class="lead">Agents find your manifest through a fixed anchor, then talk to a small, predictable set of routes.</p>
+    <pre>GET  /.well-known/ai2w    discovery anchor (required) - points to the manifest
+GET  /ai2w                the capability manifest (canonical home)
+POST /ai2w/negotiate      agree a capability set + transport
+GET  /ai2w/{module}       content · products · actions · events · search · agent</pre>
+    <p><code>/ai2w</code> is the RECOMMENDED canonical endpoint; <code>/.well-known/ai2w</code> is the fixed anchor that carries or points to it. Discovery is read-only and safe: fetching a manifest never changes state. If a neutral cross-vendor discovery standard emerges, AI2Web is designed to be carried by it rather than competing.</p>
+  </section>
+
+  <section id="capabilities">
+    <h2>Capability modules</h2>
+    <p class="lead">Capabilities are a map of <code>module -&gt; boolean | object</code>. A boolean declares presence; an object adds detail such as an endpoint. Commerce is one module among equals, the model is not commerce-centric.</p>
+    <table>
+      <thead><tr><th>Module</th><th>What it covers</th><th>Profiled in</th></tr></thead>
+      <tbody>
+        <tr><td><code>content</code></td><td>Readable, structured content: articles, pages, docs, FAQs</td><td>RFC-0008</td></tr>
+        <tr><td><code>search</code></td><td>A query interface over content and catalog</td><td>RFC-0008</td></tr>
+        <tr><td><code>commerce</code></td><td>Products, cart, checkout, returns, inventory</td><td>RFC-0005</td></tr>
+        <tr><td><code>support</code></td><td>Order tracking, returns, refunds, cancellations, issues</td><td>RFC-0007</td></tr>
+        <tr><td><code>actions</code></td><td>Declared operations an agent can call</td><td>RFC-0002</td></tr>
+        <tr><td><code>events</code></td><td>Subscribable events (order shipped, price drop)</td><td>RFC-0002</td></tr>
+        <tr><td><code>agent</code></td><td>The site's own AI agent (agent-to-agent)</td><td>RFC-0004</td></tr>
+        <tr><td><code>identity</code></td><td>Legal name, policies, support and security contacts</td><td>Spec &sect;4.3</td></tr>
+        <tr><td><code>extensions</code></td><td>Namespaced <code>x-&lt;vendor&gt;</code> extensions</td><td>RFC-0010</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="negotiation">
+    <h2>Negotiation</h2>
+    <p class="lead">The site advertises its full set; the agent uses the subset it understands. The result is the intersection, plus the chosen transport and auth.</p>
+    <pre>POST /ai2w/negotiate
+{ "capabilities": ["content", "commerce"], "transports": ["mcp", "rest"], "auth": ["oauth2"] }
+
+-&gt; { "negotiated": { "transport": "mcp", "capabilities": ["content", "commerce"],
+                    "auth": "oauth2", "endpoints": { ... } },
+     "unsupported": [] }</pre>
+    <p>No transport is mandatory. The success of any single protocol is a tailwind, not a dependency, so a site can add or drop transports without breaking discovery.</p>
+  </section>
+
+  <section id="actions">
+    <h2>Actions, risk &amp; approval</h2>
+    <p class="lead">Every action declares a risk tier. Discovery is safe; execution is controlled. This is the rule that lets an agent act without acting recklessly.</p>
+    <table>
+      <thead><tr><th>Risk</th><th>Examples</th><th>Requirement</th></tr></thead>
+      <tbody>
+        <tr><td><b>low</b></td><td>read content, search, public pricing</td><td>no auth, no approval</td></tr>
+        <tr><td><b>medium</b></td><td>create ticket, check order, reserve stock</td><td>auth SHOULD; approval MAY</td></tr>
+        <tr><td><b>high</b></td><td>purchase, payment, refund, cancel, export data</td><td>auth MUST; user approval MUST</td></tr>
+      </tbody>
+    </table>
+    <p>High-risk actions never auto-run. The flow is: <b>discover &rarr; prepare &rarr; the site returns a preview &rarr; the user approves &rarr; execute &rarr; confirmation with an audit reference</b>. In the reference adapters this is enforced in one shared executor, and a <code>high</code>-risk action previews even if a manifest tries to declare <code>approval: false</code>.</p>
+  </section>
+
+  <section id="transports">
+    <h2>Transports &amp; adapters</h2>
+    <p class="lead">Describe once, generate many. One capability model projects onto whichever protocol an assistant speaks.</p>
+    <pre>AI Assistant
+     |
+  AI2Web  (one capability model)
+     |-- MCP          call declared actions as tools
+     |-- ACP          checkout transport (RFC-0005 Profile 1)
+     |-- REST         discovery, modules, feeds
+     |-- GraphQL      the model as a schema
+     |-- OpenAPI      the actions as an API document
+     |-- Webhooks     event delivery
+     +-- Future protocols</pre>
+    <p>In the JavaScript framework these are the <code>@ai2web/mcp-bridge</code>, <code>@ai2web/acp-adapter</code>, <code>@ai2web/graphql-adapter</code> and <code>@ai2web/openapi-adapter</code> packages. The executing adapters all route through one guarded executor, so the approval, same-origin credential and SSRF rules hold uniformly across transports.</p>
+  </section>
+
+  <section id="sdks">
+    <h2>SDKs &amp; install</h2>
+    <p class="lead">Author in whatever you already use. The framework is TypeScript, JavaScript and React, with SDKs across PHP, Python, Go and .NET and a WordPress plugin. Every SDK reproduces the same conformance contract.</p>
+    <pre>npm install @ai2web/core          # types, builder, validation, discovery, badge
+npm install @ai2web/server        # /ai2w route handler (Node + Cloudflare)
+npm install @ai2web/mcp-bridge    # expose your capabilities as an MCP server
+npm install @ai2web/react         # hooks + &lt;Ai2wBadge&gt;</pre>
+    <p>The JavaScript packages ship as standard ESM with bundled types, so they run unchanged in plain JavaScript. A build-free <code>&lt;ai2w-badge&gt;</code> web component drops into any HTML page with no bundler. Score a manifest programmatically:</p>
+    <pre>import { discover, validateManifest } from "@ai2web/core";
+
+const { manifest } = await discover("https://ai2web.dev");
+const { score, tier } = validateManifest(manifest);
+console.log(`${score}/100 (${tier})`);</pre>
+  </section>
+
+  <section id="assistants">
+    <h2>Connect Claude &amp; ChatGPT</h2>
+    <p class="lead">An AI2Web MCP endpoint works with existing assistant connectors today, no vendor needs to adopt <code>ai2w</code> first.</p>
+    <ul>
+      <li><b>Claude:</b> add your <code>/ai2w/mcp</code> URL as a custom connector.</li>
+      <li><b>ChatGPT:</b> add the same URL as an app in developer mode (Apps SDK / Streamable HTTP).</li>
+      <li><b>Whole network:</b> add the AI2Web connector once and it discovers and acts on any AI-ready site.</li>
+    </ul>
+    <p>Because AI2Web ships both the website side and an agent-side connector, adoption does not depend on any single vendor moving first.</p>
+  </section>
+
+  <section id="tiers">
+    <h2>Tiers &amp; scoring</h2>
+    <p class="lead">Validation returns an AI Readiness Score out of 100 and a compliance tier.</p>
+    <table>
+      <thead><tr><th>Tier</th><th>Requires</th></tr></thead>
+      <tbody>
+        <tr><td><b>Basic</b></td><td>valid JSON, <code>protocol</code>, <code>version</code>, <code>site</code>, <code>capabilities</code></td></tr>
+        <tr><td><b>Standard</b></td><td>Basic, plus <code>transports</code>, <code>consent</code> (if actions), <code>contact</code>, negotiation</td></tr>
+        <tr><td><b>Enterprise</b></td><td>Standard, plus <code>identity</code>, <code>auth</code>, an audit model, <code>rate_limits</code>, a security contact</td></tr>
+      </tbody>
+    </table>
+    <p>Try it live on the <a href="/#validator">home page</a> or with <code>npx -p @ai2web/validator ai2web validate &lt;url&gt;</code>.</p>
+  </section>
+
+  <section id="security">
+    <h2>Security model</h2>
+    <p class="lead">Make safe things easy and dangerous things explicit.</p>
+    <ul>
+      <li><b>Discovery is safe; execution is controlled.</b> Reading a manifest never changes state.</li>
+      <li><b>Approval before money or data.</b> Purchases, refunds and data exports always return a preview to approve first.</li>
+      <li><b>Least privilege.</b> Public discovery exposes only public metadata; private data needs scoped authorization.</li>
+      <li><b>Same-origin credentials.</b> A token is never sent to an origin other than the one that issued it, and never appears in a URL.</li>
+      <li><b>Audit.</b> High-risk actions return an audit reference; logs record what ran, for whom, and whether it was approved.</li>
+    </ul>
+    <p>The full rules are in RFC-0003 (authentication and consent), RFC-0006 (adapter conformance) and RFC-0009 (privacy, audit and retention).</p>
+  </section>
+
+  <section id="spec">
+    <h2>Spec &amp; RFCs</h2>
+    <p class="lead">This page is the practical guide. The normative detail is versioned in the open.</p>
+    <div class="card">
+      <h3>Read the source of truth</h3>
+      <p>
+        <a href="https://github.com/ai2web-foundation/ai2web-spec/blob/main/spec/ai2w-v0.1.md">Specification v0.1</a> &nbsp;·&nbsp;
+        <a href="https://github.com/ai2web-foundation/ai2web-spec/tree/main/rfcs">RFCs 0000 to 0011</a> &nbsp;·&nbsp;
+        <a href="https://github.com/ai2web-foundation/ai2web-js">JavaScript framework</a> &nbsp;·&nbsp;
+        <a href="https://github.com/ai2web-foundation">All repositories</a>
+      </p>
+    </div>
+    <div class="cta" style="margin-top:6px">
+      <a class="btn primary" href="/#validator">Check your AI readiness</a>
+      <a class="btn ghost" href="https://github.com/ai2web-foundation/ai2web-spec">Read the spec</a>
+    </div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">
+  Created by <a href="https://rolandfarkas.com" rel="author">Roland</a> @ <a href="https://polarize.ltd">Polarize Ltd</a><br/>
+  AI2Web Foundation · protocol &amp; spec CC-BY 4.0 · code MIT · <a href="https://ai2web.dev">ai2web.dev</a> · <a href="https://github.com/ai2web-foundation">github.com/ai2web-foundation</a>
+</div></footer>
+
+<script>
+(function(){
+  var saved = localStorage.getItem('ai2w-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  var btn = document.getElementById('themeBtn');
+  function glyph(){ btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; }
+  glyph();
+  btn.addEventListener('click', function(){
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ai2w-theme', next); glyph();
+  });
+})();
+(function(){
+  var nav = document.getElementById('nav'), btn = document.getElementById('menuBtn');
+  btn.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? '✕' : '☰';
+  });
+  nav.addEventListener('click', function(e){ if(e.target.tagName==='A'){ nav.classList.remove('open'); btn.textContent='☰'; btn.setAttribute('aria-expanded','false'); } });
+})();
+</script>
+</body>
+</html>
