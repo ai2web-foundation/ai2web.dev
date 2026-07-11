@@ -119,6 +119,16 @@
   .card h3{margin:0 0 6px;font-size:16px}
   .card p{margin:0;color:var(--muted);font-size:14px}
 
+  /* discovery network */
+  .netgrid{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:6px}
+  @media(max-width:600px){.netgrid{grid-template-columns:1fr}}
+  .netcard{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-decoration:none;color:var(--fg)}
+  .netcard:hover{border-color:var(--fg);text-decoration:none}
+  .netcard .nh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .netcard .nh b{font-size:15px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+
   /* fragmentation visual */
   .frag{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;margin:6px 0 4px}
   .portals{display:flex;flex-wrap:wrap;gap:8px;max-width:520px;justify-content:center}
@@ -284,6 +294,12 @@
     </div>
   </section>
 
+  <section id="network" aria-labelledby="net-h">
+    <h2 id="net-h">The Discovery Network is live</h2>
+    <p class="lead">Agents find AI-ready websites here. Publish a manifest at <code>/ai2w</code>, register it, and your site appears for assistants to discover and act on. This list is pulled live from <a href="https://directory.ai2web.dev/sites">directory.ai2web.dev</a>.</p>
+    <div class="netgrid" id="netlist"><p class="kv">Loading the network...</p></div>
+  </section>
+
   <section id="protocols" aria-labelledby="p-h">
     <h2 id="p-h">Complements every protocol - never competes</h2>
     <p class="lead">Like a browser supporting HTTP/1.1, HTTP/2, HTTP/3, WebSockets and WebRTC behind one experience, AI2Web abstracts agent protocols behind one capability model. It defines the model above the transports and negotiates which to use - so any protocol's success is a tailwind.</p>
@@ -400,6 +416,27 @@
     btn.textContent = open ? '✕' : '☰';
   });
   nav.addEventListener('click', function(e){ if(e.target.tagName==='A'){ nav.classList.remove('open'); btn.textContent='☰'; btn.setAttribute('aria-expanded','false'); } });
+})();
+
+// Live Discovery Network listing (progressive: runs after render, degrades gracefully).
+(function(){
+  var el = document.getElementById('netlist');
+  if(!el) return;
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  fetch('https://directory.ai2web.dev/sites').then(function(r){ return r.json(); }).then(function(d){
+    var sites = (d && d.sites) || [];
+    if(!sites.length){ el.innerHTML = '<p class="kv">No sites registered yet.</p>'; return; }
+    el.innerHTML = sites.map(function(s){
+      var host; try{ host = new URL(s.url).host; }catch(e){ host = s.url || ''; }
+      var caps = (s.capabilities || []).map(function(c){ return '<span class="tag">'+esc(c)+'</span>'; }).join('');
+      return '<a class="netcard" href="'+esc(s.url)+'" rel="noopener" target="_blank">'
+        + '<div class="nh"><b>'+esc(s.name)+'</b><span class="kv">'+esc(s.type||'')+'</span></div>'
+        + '<div class="kv">'+esc(host)+'</div>'
+        + (caps ? '<div class="tags">'+caps+'</div>' : '') + '</a>';
+    }).join('');
+  }).catch(function(){
+    el.innerHTML = '<p class="kv">Live listing unavailable right now. Browse the API at <a href="https://directory.ai2web.dev/sites">directory.ai2web.dev</a>.</p>';
+  });
 })();
 
 // Web port of @ai2web/core validateManifest (spec §9/§11) - same algorithm as the SDKs.
