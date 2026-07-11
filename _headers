@@ -6,6 +6,11 @@
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=300
 
+# llms.txt guidance file (markdown served as text).
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+
 # Long-cache immutable assets.
 /ai2web-logo-white.svg
   Content-Type: image/svg+xml

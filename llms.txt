@@ -1,0 +1,26 @@
+# AI2Web
+
+> AI2Web is the open interoperability layer for AI-enabled websites. Describe your site's capabilities once in a manifest at /ai2w, and AI2Web exposes them to AI agents across MCP, ACP, REST, GraphQL, OpenAPI and feeds, with discovery, capability negotiation, validation and a safe, approval-gated action model.
+
+AI2Web is an open protocol, specification and framework, with reference SDKs in TypeScript/JavaScript, PHP, Python, Go and .NET, plus a WordPress plugin. It complements existing agent protocols such as MCP rather than replacing them: the capability model is the durable contract, and discovery can be carried by any neutral anchor.
+
+## Documentation
+
+- [Documentation](https://ai2web.dev/docs): Practical guide to the manifest, endpoints, capability modules, actions, SDKs and the security model
+- [AI Readiness Validator](https://ai2web.dev/#validator): Score any site or manifest out of 100 in the browser
+- [Specification (ai2w v0.1)](https://github.com/ai2web-foundation/ai2web-spec/blob/main/spec/ai2w-v0.1.md): The normative protocol specification
+- [RFCs](https://github.com/ai2web-foundation/ai2web-spec/tree/main/rfcs): Design documents, RFC-0000 to RFC-0011
+
+## Code
+
+- [GitHub organization](https://github.com/ai2web-foundation): All AI2Web repositories
+- [JavaScript and TypeScript framework](https://github.com/ai2web-foundation/ai2web-js): The @ai2web/* packages (core, validator, adapters, React)
+- [WordPress plugin](https://github.com/ai2web-foundation/ai2web-wordpress): Auto-generates a manifest for WordPress and WooCommerce
+
+## Discovery
+
+- [AI2Web manifest](https://ai2web.dev/.well-known/ai2w): This site's own AI2Web capability manifest
+
+## Optional
+
+- [Introducing AI2Web](https://rolandfarkas.com/blog/2026/07/10/introducing-ai2web): Background and motivation from the author
