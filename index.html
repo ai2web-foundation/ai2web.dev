@@ -97,6 +97,11 @@
   .btn.primary:hover{opacity:.88;text-decoration:none}
   .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
   .btn.ghost:hover{border-color:var(--fg);text-decoration:none}
+  .btn.gh{display:inline-flex;align-items:center;gap:8px}
+  .btn.gh svg{width:16px;height:16px;fill:currentColor;display:block}
+  .ghbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:7px 12px;color:var(--fg);font-size:13px;font-weight:600;text-decoration:none}
+  .ghbtn:hover{border-color:var(--fg);text-decoration:none}
+  .ghbtn svg{width:15px;height:15px;fill:currentColor;display:block}
 
   .hero{padding:84px 0 52px;text-align:center}
   .hero h1{font-size:clamp(32px,5.4vw,56px);margin:0 0 18px}
@@ -172,10 +177,13 @@
     .nav.open{transform:none;opacity:1;pointer-events:auto}
     .nav a{padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px}
     .nav a:last-of-type{border-bottom:0}
+    .nav .ghbtn{border:0;border-radius:0;border-bottom:1px solid var(--line);padding:12px 2px;font-size:16px;justify-content:flex-start}
+    .nav .ghbtn:last-of-type{border-bottom:0}
   }
 </style>
 </head>
 <body id="top">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="gh" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.6 7.6 0 018 4.5c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol></svg>
 <header><div class="wrap navbar">
   <a class="logo" href="#top" aria-label="AI2Web home"><img src="/ai2web-logo-white.svg" width="53" height="32" alt="AI2Web" fetchpriority="high" decoding="async" /></a>
   <nav class="nav" id="nav" aria-label="Primary">
@@ -185,7 +193,7 @@
     <a href="#support">Support</a>
     <a href="#validator">Validator</a>
     <a href="/docs">Docs</a>
-    <a href="https://github.com/ai2web-foundation">GitHub</a>
+    <a class="ghbtn" href="https://github.com/ai2web-foundation"><svg aria-hidden="true"><use href="#gh"/></svg>GitHub</a>
   </nav>
   <button class="icon-btn" id="themeBtn" aria-label="Toggle black / white theme" title="Toggle theme">☀</button>
   <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
@@ -196,10 +204,11 @@
   <div class="hero">
     <span class="badge">Open protocol · <code>ai2w</code> · one layer for every AI</span>
     <h1>Make your website work with every AI - from one place.</h1>
-    <p class="sub">AI2Web is the interoperability layer for AI-enabled websites. Describe your site once; it works across AI assistants and protocols - MCP, ACP, REST, GraphQL and whatever comes next - with a single place to validate, monitor and manage it.</p>
+    <p class="sub">AI2Web is the interoperability layer for AI-enabled websites. Describe your website once, and AI2Web automatically exposes its capabilities through the AI protocols your customers use today - MCP, ACP, REST and GraphQL - while staying ready for whatever comes next. Validate, monitor and manage it from one place.</p>
     <div class="cta">
       <a class="btn primary" href="#validator">Check your AI readiness</a>
-      <a class="btn ghost" href="https://github.com/ai2web-foundation">Read the spec</a>
+      <a class="btn ghost" href="https://github.com/ai2web-foundation/ai2web-spec">Read the spec</a>
+      <a class="btn ghost gh" href="https://github.com/ai2web-foundation"><svg aria-hidden="true"><use href="#gh"/></svg>Contribute on GitHub</a>
     </div>
   </div>
 
@@ -295,25 +304,6 @@
     </div>
   </section>
 
-  <section id="validator" aria-labelledby="v-h">
-    <h2 id="v-h">AI Readiness Validator</h2>
-    <p class="lead">Paste an AI2Web manifest (or load an example). Scored exactly like <code>npx&nbsp;ai2web&nbsp;validate</code> - the same logic that ships in the SDKs.</p>
-    <div class="val">
-      <label for="input" class="kv">Manifest JSON</label>
-      <textarea id="input" spellcheck="false" placeholder='Paste your /ai2w manifest JSON here…'></textarea>
-      <div class="row">
-        <button class="go" type="button" onclick="runValidate()">Validate</button>
-        <button class="sec" type="button" onclick="loadExample()">Load example</button>
-        <span class="kv" id="hint"></span>
-      </div>
-      <div class="result" id="result">
-        <div class="score"><div class="num" id="score">-</div><div class="tier" id="tier"></div></div>
-        <div class="bar"><span id="barfill" style="width:0%"></span></div>
-        <ul class="checks" id="checks"></ul>
-      </div>
-    </div>
-  </section>
-
   <section id="faq" aria-labelledby="faq-h">
     <h2 id="faq-h">Frequently asked questions</h2>
     <div class="faq">
@@ -345,6 +335,40 @@
         <summary>How do I make my website AI-ready?</summary>
         <p>Add an AI2Web capability manifest at <code>/ai2w</code> using the plugin or an SDK, then validate it to get your AI Readiness score. Agents discover it, negotiate capabilities, and can act - safely, with approval on anything sensitive.</p>
       </details>
+    </div>
+  </section>
+
+  <section id="validator" aria-labelledby="v-h">
+    <h2 id="v-h">AI Readiness Validator</h2>
+    <p class="lead">Paste an AI2Web manifest (or load an example). Scored exactly like <code>npx&nbsp;ai2web&nbsp;validate</code> - the same logic that ships in the SDKs.</p>
+    <div class="val">
+      <label for="input" class="kv">Manifest JSON</label>
+      <textarea id="input" spellcheck="false" placeholder='Paste your /ai2w manifest JSON here…'></textarea>
+      <div class="row">
+        <button class="go" type="button" onclick="runValidate()">Validate</button>
+        <button class="sec" type="button" onclick="loadExample()">Load example</button>
+        <span class="kv" id="hint"></span>
+      </div>
+      <div class="result" id="result">
+        <div class="score"><div class="num" id="score">-</div><div class="tier" id="tier"></div></div>
+        <div class="bar"><span id="barfill" style="width:0%"></span></div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contribute" aria-labelledby="contrib-h">
+    <h2 id="contrib-h">Help build the AI-ready web</h2>
+    <p class="lead">AI2Web is open source and community-driven. The protocol and spec are CC-BY 4.0, the code is MIT. Whether you write code, run a store or maintain a CMS, there is a way in.</p>
+    <div class="grid g3">
+      <div class="card"><h3>Add an adapter</h3><p>Map a new protocol or platform into the capability model. The adapter contract is small and enforced by conformance tests.</p></div>
+      <div class="card"><h3>Improve an SDK</h3><p>TypeScript, PHP, Python, Go and .NET all reproduce one conformance contract. Sharpen one, or port to a new language.</p></div>
+      <div class="card"><h3>Write docs &amp; examples</h3><p>Real manifests, framework guides and integration walkthroughs help the next developer ship in minutes.</p></div>
+    </div>
+    <div class="cta" style="margin-top:22px;justify-content:flex-start">
+      <a class="btn primary gh" href="https://github.com/ai2web-foundation"><svg aria-hidden="true"><use href="#gh"/></svg>Contribute on GitHub</a>
+      <a class="btn ghost" href="https://github.com/ai2web-foundation/ai2web-spec">Read the spec</a>
+      <a class="btn ghost" href="/docs">Read the docs</a>
     </div>
   </section>
 
