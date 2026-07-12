@@ -168,6 +168,7 @@
       <li><a href="#sdks">SDKs &amp; install</a></li>
       <li><a href="#assistants">Connect Claude &amp; ChatGPT</a></li>
       <li><a href="#tiers">Tiers &amp; scoring</a></li>
+      <li><a href="#validation">How validation works</a></li>
       <li><a href="#security">Security model</a></li>
       <li><a href="#spec">Spec &amp; RFCs</a></li>
     </ul>
@@ -336,6 +337,17 @@ console.log(`${score}/100 (${tier})`);</pre>
       </tbody>
     </table>
     <p>Try it live on the <a href="/#validator">home page</a> or with <code>npx -p @ai2web/validator ai2web validate &lt;url&gt;</code>.</p>
+  </section>
+
+  <section id="validation">
+    <h2>How validation works</h2>
+    <p class="lead">Validation happens at three layers. Keeping them separate answers the common question of whether you validate per request or wire up your own endpoint tests.</p>
+    <ol>
+      <li><b>Manifest validation (design time).</b> <code>ai2web validate &lt;url&gt;</code> and the web validator fetch your <code>/ai2w</code> manifest and score it against the spec (required fields, capabilities, transports, consent, auth), giving an AI Readiness Score out of 100 and a tier. This checks the contract you publish, not live traffic.</li>
+      <li><b>Request validation (run time).</b> Every action declares an <code>input_schema</code>. The server (<code>@ai2web/server</code>) validates each incoming request body against it before your handler runs, returning a <code>400 invalid_request</code> if it does not match. It is on by default, so schema compliance per request is built in, not something you wire yourself. Set <code>validateInput: false</code> to opt out.</li>
+      <li><b>Endpoint checking (live).</b> <code>ai2web check &lt;url&gt;</code> discovers your manifest and probes the declared read endpoints (the discovery anchor, <code>/ai2w</code>, and each module endpoint) to confirm they respond. It lists your actions but does not call them, since actions can change state.</li>
+    </ol>
+    <p>So the validator scores the contract, the server enforces it per request, and <code>check</code> confirms the endpoints are live. You still test your own endpoint business logic, but you do not need to hand-roll schema checks or reachability tests.</p>
   </section>
 
   <section id="security">
