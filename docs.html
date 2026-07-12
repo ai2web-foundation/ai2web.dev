@@ -183,9 +183,10 @@
       <li><b>Validate</b> it and get your AI Readiness Score out of 100.</li>
       <li>Agents <b>discover</b> the manifest, <b>negotiate</b> a capability set, and can <b>act</b>, with approval on anything sensitive.</li>
     </ol>
-    <p>Validate any site or manifest from the command line, or in the browser on the <a href="/#validator">home page</a>:</p>
+    <p>Validate any site or manifest from the command line, or in the browser on the <a href="/#validator">home page</a>. Once it is deployed, <code>check</code> probes the live endpoints too:</p>
     <pre>npx -p @ai2web/validator ai2web validate https://your-site.com
-npx -p @ai2web/validator ai2web validate ./manifest.json</pre>
+npx -p @ai2web/validator ai2web validate ./manifest.json
+npx -p @ai2web/validator ai2web check https://your-site.com</pre>
   </section>
 
   <section id="manifest">
