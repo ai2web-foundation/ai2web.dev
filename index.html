@@ -201,7 +201,7 @@
     <a href="#how">How</a>
     <a href="#one-place">One place</a>
     <a href="#support">Support</a>
-    <a href="#validator">Validator</a>
+    <a href="/validator">Validator</a>
     <a href="/docs">Docs</a>
     <a class="ghbtn" href="https://github.com/ai2web-foundation"><svg aria-hidden="true"><use href="#gh"/></svg>GitHub</a>
   </nav>
@@ -216,7 +216,7 @@
     <h1>Make your website work with every AI - from one place.</h1>
     <p class="sub">AI2Web is the interoperability layer for AI-enabled websites. Describe your website once, and AI2Web automatically exposes its capabilities through the AI protocols your customers use today - MCP, ACP, REST and GraphQL - while staying ready for whatever comes next. Validate, monitor and manage it from one place.</p>
     <div class="cta">
-      <a class="btn primary" href="#validator">Check your AI readiness</a>
+      <a class="btn primary" href="/validator">Check your AI readiness</a>
       <a class="btn ghost" href="https://github.com/ai2web-foundation/ai2web-spec">Read the spec</a>
       <a class="btn ghost gh" href="https://github.com/ai2web-foundation"><svg aria-hidden="true"><use href="#gh"/></svg>Contribute on GitHub</a>
     </div>
@@ -359,20 +359,9 @@
 
   <section id="validator" aria-labelledby="v-h">
     <h2 id="v-h">AI Readiness Validator</h2>
-    <p class="lead">Paste an AI2Web manifest (or load an example). Scored exactly like <code>npx&nbsp;ai2web&nbsp;validate</code> - the same logic that ships in the SDKs.</p>
-    <div class="val">
-      <label for="input" class="kv">Manifest JSON</label>
-      <textarea id="input" spellcheck="false" placeholder='Paste your /ai2w manifest JSON here…'></textarea>
-      <div class="row">
-        <button class="go" type="button" onclick="runValidate()">Validate</button>
-        <button class="sec" type="button" onclick="loadExample()">Load example</button>
-        <span class="kv" id="hint"></span>
-      </div>
-      <div class="result" id="result">
-        <div class="score"><div class="num" id="score">-</div><div class="tier" id="tier"></div></div>
-        <div class="bar"><span id="barfill" style="width:0%"></span></div>
-        <ul class="checks" id="checks"></ul>
-      </div>
+    <p class="lead">Enter your website and get its AI Readiness Score out of 100. It fetches your manifest and scores it exactly like <code>npx&nbsp;ai2web&nbsp;validate</code>, or paste a manifest to test before you deploy.</p>
+    <div class="cta" style="justify-content:flex-start">
+      <a class="btn primary" href="/validator">Open the validator</a>
     </div>
   </section>
 
@@ -443,71 +432,6 @@
   });
 })();
 
-// Web port of @ai2web/core validateManifest (spec §9/§11) - same algorithm as the SDKs.
-function validate(m){
-  var errors=[], checks=[];
-  var has=function(v){return v===true||(v&&typeof v==='object'&&v.enabled===true)};
-  var cap=function(n){return m.capabilities&&m.capabilities[n]};
-  if(m.protocol!=='ai2w')errors.push("protocol must be 'ai2w'");
-  if(!/^\d+\.\d+(\.\d+)?$/.test(String(m.version==null?'':m.version)))errors.push('version missing/invalid');
-  ['name','url','type'].forEach(function(k){if(!(m.site&&m.site[k]))errors.push('site.'+k+' missing')});
-  if(!m.capabilities||!Object.keys(m.capabilities).length)errors.push('capabilities empty');
-  var actionsExist=has(cap('actions'))||(Array.isArray(m.actions)&&m.actions.length>0)||['commerce','booking'].some(function(c){return has(cap(c))});
-  var score=0;
-  var add=function(ok,pts,label,hint){checks.push({ok:ok,label:label,hint:ok?null:hint});if(ok)score+=pts};
-  add(errors.length===0,30,'Valid discovery manifest','fix errors');
-  add(has(cap('content')),6,'Content','expose content module');
-  add(has(cap('commerce'))||has(cap('booking'))||has(cap('services')),6,'Products / services / booking','expose a commerce/services/booking module');
-  add(has(cap('search')),4,'Search','add a search capability');
-  add(actionsExist,5,'Actions','declare actions');
-  add(has(cap('events')),6,'Events / subscriptions','publish subscribable events');
-  add(!!(m.agent_service&&m.agent_service.enabled),4,'Agent service (A2A)','expose /ai2w/agent');
-  var commerce=cap('commerce');
-  add(!has(commerce)||(commerce&&commerce.checkout===true),4,'Checkout','commerce present but checkout missing');
-  add(!!(m.transports&&m.transports.mcp&&m.transports.mcp.enabled===true),8,'MCP transport','expose an MCP endpoint');
-  add(!!(m.transports&&((m.transports.rest&&m.transports.rest.enabled)||m.transports.feeds)),4,'REST / feeds','expose REST or feeds');
-  var oauthOk=!!(m.auth&&Array.isArray(m.auth.methods)&&m.auth.methods.indexOf('oauth2')>-1&&m.auth.oauth2&&m.auth.oauth2.pkce===true);
-  var consentDeclared=!!(m.consent&&m.consent.requires_user_approval_for&&m.consent.requires_user_approval_for.length);
-  add(!actionsExist||oauthOk,8,'OAuth2 + PKCE','protected actions need oauth2+pkce');
-  add(!actionsExist||consentDeclared,7,'Consent declared','declare consent for sensitive actions');
-  add(!!m.identity,4,'Identity','add identity (legal_name, policies)');
-  add(!!m.contact,4,'Contact','add support/security contact');
-  score=Math.min(100,score);
-  var basic=errors.length===0;
-  var standard=basic&&!!m.transports&&(!actionsExist||consentDeclared)&&!!m.contact;
-  var enterprise=standard&&!!m.identity&&!!m.auth&&!!m.rate_limits;
-  var tier=enterprise?'Enterprise':standard?'Standard':basic?'Basic':'Invalid';
-  return {errors:errors,checks:checks,score:score,tier:tier};
-}
-function runValidate(){
-  var hint=document.getElementById('hint'), m;
-  try{m=JSON.parse(document.getElementById('input').value)}catch(e){hint.textContent='⚠ invalid JSON';return}
-  hint.textContent='';
-  var r=validate(m);
-  document.getElementById('score').textContent=r.score+'/100';
-  document.getElementById('tier').textContent='Tier: '+r.tier+(r.errors.length?' · '+r.errors.length+' error(s)':'');
-  document.getElementById('barfill').style.width=r.score+'%';
-  document.getElementById('checks').innerHTML=
-    r.errors.map(function(e){return '<li class="err"><span class="sym">✗</span> '+e+'</li>'}).join('')
-    + r.checks.filter(function(c){return c.label!=='Valid discovery manifest'}).map(function(c){
-      return c.ok?'<li class="ok"><span class="sym">✓</span> '+c.label+'</li>'
-                 :'<li class="warn"><span class="sym">⚠</span> '+c.label+' <span class="hint">- '+c.hint+'</span></li>';}).join('');
-  document.getElementById('result').classList.add('show');
-}
-function loadExample(){
-  document.getElementById('input').value=JSON.stringify({
-    protocol:'ai2w',version:'0.1',
-    site:{name:'Example Store',url:'https://store.example.com',type:'ecommerce'},
-    identity:{legal_name:'Example Store Ltd'},
-    capabilities:{content:true,commerce:{enabled:true,endpoint:'/ai2w/products',checkout:true},search:{enabled:true},events:{enabled:true},actions:{enabled:true}},
-    transports:{rest:{enabled:true,base:'/ai2w'},mcp:{enabled:true,endpoint:'/ai2w/mcp'},acp:{enabled:true}},
-    auth:{methods:['none','oauth2'],oauth2:{pkce:true,scopes:['checkout']}},
-    consent:{requires_user_approval_for:['purchase']},
-    events:{endpoint:'/ai2w/events',types:['order.shipped','price.drop']},
-    contact:{support:'help@store.example.com'}
-  },null,2);
-  runValidate();
-}
 </script>
 </body>
 </html>
