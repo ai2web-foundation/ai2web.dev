@@ -13,49 +13,82 @@
 <link rel="apple-touch-icon" href="/logo-192.png" />
 <style>
   :root{
-    --bg:#000; --panel:#0c0c0c; --fg:#fff; --muted:#9a9a9a; --line:#242424;
+    --bg:#000; --panel:#0c0c0c; --panel2:#161616; --fg:#fff; --muted:#9a9a9a;
+    --line:#242424; --logo-invert:0;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
-  :root[data-theme="light"]{ --bg:#fff; --panel:#fafafa; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; }
-  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#fff; --panel:#fafafa; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; } }
+  :root[data-theme="light"]{ --bg:#fff; --panel:#fafafa; --panel2:#f0f0f0; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; --logo-invert:1; }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   a{color:var(--fg)}
-  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  :focus-visible{outline:2px solid var(--fg);outline-offset:2px;border-radius:6px}
+
   header{border-bottom:1px solid var(--line);position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);z-index:20}
-  .navbar{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .logo{font-weight:800;letter-spacing:-0.02em;text-decoration:none;font-size:18px}
-  .nav a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none;margin-left:18px}
-  .nav a:hover{color:var(--fg)}
-  main{padding:48px 0 72px}
-  h1{font-size:clamp(28px,5vw,40px);margin:0 0 8px;letter-spacing:-0.02em}
-  .updated{color:var(--muted);font-size:14px;margin:0 0 32px}
-  h2{font-size:20px;margin:36px 0 10px;letter-spacing:-0.01em}
-  p,li{color:var(--fg)}
-  p{margin:0 0 14px}
-  .muted{color:var(--muted)}
-  ul{margin:0 0 14px;padding-left:20px}
-  li{margin:0 0 7px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:0 0 20px}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
-  footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;padding:28px 0}
-  footer a{color:var(--muted)}
-  footer a:hover{color:var(--fg)}
+  .navbar{display:flex;align-items:center;gap:14px;height:64px}
+  .logo{display:flex;align-items:center;flex:0 0 auto}
+  .logo img{height:32px;width:auto;display:block;filter:invert(var(--logo-invert))}
+  .nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+  .nav a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none}
+  .nav a:hover,.nav a[aria-current]{color:var(--fg)}
+  .icon-btn{background:transparent;border:1px solid var(--line);color:var(--fg);width:38px;height:38px;border-radius:9px;cursor:pointer;display:grid;place-items:center;font-size:15px;line-height:1}
+  .icon-btn:hover{border-color:var(--fg)}
+  .menu-btn{display:none;margin-left:auto}
+
+  .pagehead{padding:52px 0 8px}
+  .pagehead h1{font-size:clamp(30px,4.6vw,44px);margin:0 0 12px;letter-spacing:-.02em;line-height:1.15;max-width:760px}
+  .pagehead p{font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:760px;margin:0}
+
+  main{padding-bottom:24px}
+  h2{font-size:23px;margin:34px 0 10px;letter-spacing:-.02em;line-height:1.2;max-width:760px}
+  p{margin:0 0 14px;color:var(--muted);max-width:760px}
+  p b,li b{color:var(--fg)}
+  ul{color:var(--muted);margin:0 0 14px;padding-left:20px;max-width:760px}
+  li{margin:6px 0}
+  code{font-family:var(--mono)}
+  p code,li code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:12.5px;color:var(--fg)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:0 0 14px;max-width:760px}
+  .card p:last-child{margin:0}
+
+  footer{padding:44px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+  footer a{color:var(--fg)}
+
+  @media(max-width:720px){
+    .menu-btn{display:grid}
+    .nav{position:absolute;left:0;right:0;top:64px;margin:0;flex-direction:column;align-items:stretch;gap:0;
+         background:var(--bg);border-bottom:1px solid var(--line);padding:8px 20px 16px;
+         transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease}
+    .nav.open{transform:none;opacity:1;pointer-events:auto}
+    .nav a{padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px}
+    .nav a:last-of-type{border-bottom:0}
+  }
 </style>
 </head>
 <body>
 <header><div class="wrap navbar">
-  <a class="logo" href="/">AI2Web</a>
-  <nav class="nav" aria-label="Primary">
+  <a class="logo" href="/" aria-label="AI2Web home"><img src="/ai2web-logo-white.svg" width="53" height="32" alt="AI2Web" fetchpriority="high" decoding="async" /></a>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="/#why">Why</a>
+    <a href="/#how">How</a>
+    <a href="/#one-place">One place</a>
+    <a href="/#support">Support</a>
     <a href="/validator">Validator</a>
     <a href="/docs">Docs</a>
     <a href="https://github.com/ai2web-foundation">GitHub</a>
   </nav>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle black / white theme" title="Toggle theme">☀</button>
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </div></header>
 
-<main><div class="wrap">
-  <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: 13 July 2026</p>
+<main>
+<div class="wrap">
+  <div class="pagehead">
+    <h1>Privacy Policy</h1>
+    <p>Last updated: 13 July 2026</p>
+  </div>
 
   <p>AI2Web is an open protocol, specification and set of tools created by the AI2Web Foundation. This policy explains what each part of AI2Web does and does not collect. The short version: AI2Web is built to be privacy preserving, works only with public website metadata, and does not sell data or serve advertising.</p>
 
@@ -72,10 +105,10 @@
 
   <h2>3. The AI Readiness Checker browser extension</h2>
   <div class="card">
-    <p style="margin-bottom:10px"><strong>What it does:</strong> when you click the extension's toolbar icon, it reads the origin (scheme and hostname) of the tab you are currently viewing and sends only that origin to <code>validator.ai2web.dev</code> to score that site's public AI2Web readiness. The result is shown in the popup.</p>
-    <p style="margin-bottom:0"><strong>What it does not do:</strong> it does not run in the background, does not read page content, does not track your browsing history, does not store anything on your device, uses no cookies, analytics, advertising or third-party trackers, and never sends data anywhere other than the AI2Web Validator described above. It requests the minimum permissions needed: <code>activeTab</code> (the current tab, only when you click) and network access to the Validator host.</p>
+    <p><b>What it does:</b> when you click the extension's toolbar icon, it reads the origin (scheme and hostname) of the tab you are currently viewing and sends only that origin to <code>validator.ai2web.dev</code> to score that site's public AI2Web readiness. The result is shown in the popup.</p>
+    <p><b>What it does not do:</b> it does not run in the background, does not read page content, does not track your browsing history, does not store anything on your device, uses no cookies, analytics, advertising or third-party trackers, and never sends data anywhere other than the AI2Web Validator described above. It requests the minimum permissions needed: <code>activeTab</code> (the current tab, only when you click) and network access to the Validator host.</p>
   </div>
-  <p class="muted">The origin is sent only at the moment you click the icon, is used solely to fetch and score the site's public manifest, and is not retained as a personal record.</p>
+  <p>The origin is sent only at the moment you click the icon, is used solely to fetch and score the site's public manifest, and is not retained as a personal record.</p>
 
   <h2>4. The Discovery Network (directory.ai2web.dev)</h2>
   <p>The optional Discovery Network is a directory of sites that support AI2Web. It stores only public metadata that a site owner chooses to submit (such as a site name, URL, capabilities and manifest location). It does not contain personal data about visitors.</p>
@@ -92,10 +125,40 @@
 
   <h2>7. Contact</h2>
   <p>Questions about this policy or your data: <a href="mailto:hello@ai2web.dev">hello@ai2web.dev</a>. AI2Web is created by <a href="https://rolandfarkas.com">Roland Farkas</a> at <a href="https://polarize.ltd">Polarize Ltd</a>.</p>
-</div></main>
+</div>
+</main>
 
 <footer><div class="wrap">
-  AI2Web Foundation · protocol &amp; spec CC-BY 4.0 · code MIT · <a href="/">ai2web.dev</a> · <a href="https://github.com/ai2web-foundation">github.com/ai2web-foundation</a>
+  <div style="display:inline-flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
+    <a href="https://www.producthunt.com/products/ai2web?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-ai2web" target="_blank" rel="noopener noreferrer"><img alt="AI2Web - Describe your site once. Every AI agent can use it. | Product Hunt" width="250" height="54" style="max-width:100%;height:auto" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1193322&amp;theme=dark&amp;t=1783854932637" /></a>
+    <a href="https://fazier.com/launches/ai2web.dev" target="_blank" rel="noopener noreferrer"><img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=dark" width="120" alt="Fazier badge" style="max-width:100%;height:auto" /></a>
+  </div><br/><br/>
+  Created by <a href="https://rolandfarkas.com" rel="author">Roland</a> @ <a href="https://polarize.ltd">Polarize Ltd</a><br/>
+  AI2Web Foundation &middot; protocol &amp; spec CC-BY 4.0 &middot; code MIT &middot; <a href="https://ai2web.dev">ai2web.dev</a> &middot; <a href="https://github.com/ai2web-foundation">github.com/ai2web-foundation</a> &middot; <a href="/privacy">Privacy</a>
 </div></footer>
+
+<script>
+(function(){
+  var saved = localStorage.getItem('ai2w-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  var btn = document.getElementById('themeBtn');
+  function glyph(){ btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; }
+  glyph();
+  btn.addEventListener('click', function(){
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ai2w-theme', next); glyph();
+  });
+})();
+(function(){
+  var nav = document.getElementById('nav'), btn = document.getElementById('menuBtn');
+  btn.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? '✕' : '☰';
+  });
+  nav.addEventListener('click', function(e){ if(e.target.tagName==='A'){ nav.classList.remove('open'); btn.textContent='☰'; btn.setAttribute('aria-expanded','false'); } });
+})();
+</script>
 </body>
 </html>
