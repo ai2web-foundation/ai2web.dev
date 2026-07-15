@@ -1,10 +1,5 @@
 # Cloudflare Pages headers for ai2web.dev
-
-# Serve the dogfood manifest as JSON with open CORS (it has no file extension).
-/.well-known/ai2w
-  Content-Type: application/json; charset=utf-8
-  Access-Control-Allow-Origin: *
-  Cache-Control: public, max-age=300
+# The /ai2w and /.well-known/ai2w routes are served by functions/_middleware.js (JSON + CORS).
 
 # llms.txt guidance file (markdown served as text).
 /llms.txt
