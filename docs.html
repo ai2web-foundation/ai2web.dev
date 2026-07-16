@@ -167,7 +167,7 @@
       <li><a href="#actions">Actions, risk &amp; approval</a></li>
       <li><a href="#transports">Transports &amp; adapters</a></li>
       <li><a href="#sdks">SDKs &amp; install</a></li>
-      <li><a href="#assistants">Connect Claude &amp; ChatGPT</a></li>
+      <li><a href="#assistants">Connect an assistant</a></li>
       <li><a href="#tiers">Tiers &amp; scoring</a></li>
       <li><a href="#validation">How validation works</a></li>
       <li><a href="#security">Security model</a></li>
@@ -317,14 +317,15 @@ console.log(`${score}/100 (${tier})`);</pre>
   </section>
 
   <section id="assistants">
-    <h2>Connect Claude &amp; ChatGPT</h2>
+    <h2>Connect an assistant</h2>
     <p class="lead">An AI2Web MCP endpoint works with existing assistant connectors today, no vendor needs to adopt <code>ai2w</code> first.</p>
     <ul>
-      <li><b>Claude:</b> add your <code>/ai2w/mcp</code> URL as a custom connector.</li>
-      <li><b>ChatGPT:</b> add the same URL as an app in developer mode (Apps SDK / Streamable HTTP).</li>
+      <li><b>Claude:</b> add your <code>/ai2w/mcp</code> URL as a custom connector, or <code>claude mcp add --transport http</code> in Claude Code.</li>
+      <li><b>ChatGPT:</b> add the same URL as a custom connector / remote MCP server (Streamable HTTP).</li>
+      <li><b>Grok:</b> add it as a custom MCP server, or attach it via the OpenAI-compatible Responses API remote-MCP path.</li>
       <li><b>Whole network:</b> add the AI2Web connector once and it discovers and acts on any AI-ready site.</li>
     </ul>
-    <p>Because AI2Web ships both the website side and an agent-side connector, adoption does not depend on any single vendor moving first.</p>
+    <p>Because AI2Web ships both the website side and an agent-side connector, adoption does not depend on any single vendor moving first. See the <a href="/connect">step-by-step connect guide</a>, with a transcript reproduced live against the demo store.</p>
   </section>
 
   <section id="tiers">

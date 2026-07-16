@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Connect AI2Web to your assistant - AI2Web</title>
+<meta name="description" content="Add an AI2Web site to Claude, ChatGPT, Grok or any MCP client with one URL: the /ai2w/mcp endpoint. Reproduced live against the demo store, with the exact connector steps and a verified transcript." />
+<link rel="canonical" href="https://ai2web.dev/connect" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="AI2Web" />
+<meta property="og:title" content="Connect AI2Web to your assistant" />
+<meta property="og:description" content="One URL adds an AI2Web site to Claude, ChatGPT, Grok or any MCP client. Reproduced live, with a verified transcript." />
+<meta property="og:url" content="https://ai2web.dev/connect" />
+<meta property="og:image" content="https://ai2web.dev/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en_GB" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Connect AI2Web to your assistant" />
+<meta name="twitter:description" content="One URL adds an AI2Web site to Claude, ChatGPT, Grok or any MCP client. Reproduced live." />
+<meta name="twitter:image" content="https://ai2web.dev/og-image.png" />
+
+<link rel="icon" type="image/png" sizes="96x96" href="/logo-96.png" />
+<link rel="apple-touch-icon" href="/logo-192.png" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+<link rel="ai2w" href="/ai2w" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": "https://ai2web.dev/#org", "name": "AI2Web Foundation",
+      "url": "https://ai2web.dev/", "logo": "https://ai2web.dev/logo-512.png",
+      "sameAs": ["https://github.com/ai2web-foundation"] },
+    { "@type": "HowTo", "name": "Connect an AI2Web site to your assistant",
+      "url": "https://ai2web.dev/connect", "inLanguage": "en",
+      "publisher": { "@id": "https://ai2web.dev/#org" },
+      "description": "Add an AI2Web site to Claude, ChatGPT, Grok or any MCP client using the /ai2w/mcp endpoint." },
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ai2web.dev/" },
+      { "@type": "ListItem", "position": 2, "name": "Connect", "item": "https://ai2web.dev/connect" }
+    ]}
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#000; --panel:#0c0c0c; --panel2:#161616; --fg:#fff; --muted:#9a9a9a;
+    --line:#242424; --logo-invert:0;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  :root[data-theme="light"]{ --bg:#fff; --panel:#fafafa; --panel2:#f0f0f0; --fg:#000; --muted:#5f5f5f; --line:#e5e5e5; --logo-invert:1; }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:var(--fg)}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.15}
+  :focus-visible{outline:2px solid var(--fg);outline-offset:2px;border-radius:6px}
+
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);z-index:20}
+  .navbar{display:flex;align-items:center;gap:14px;height:64px}
+  .logo{display:flex;align-items:center;flex:0 0 auto}
+  .logo img{height:32px;width:auto;display:block;filter:invert(var(--logo-invert))}
+  .nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+  .nav a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none}
+  .nav a:hover,.nav a[aria-current]{color:var(--fg)}
+  .icon-btn{background:transparent;border:1px solid var(--line);color:var(--fg);width:38px;height:38px;border-radius:9px;cursor:pointer;display:grid;place-items:center;font-size:15px;line-height:1}
+  .icon-btn:hover{border-color:var(--fg)}
+  .menu-btn{display:none;margin-left:auto}
+
+  .btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid var(--fg);text-decoration:none}
+  .btn.primary{background:var(--fg);color:var(--bg)}
+  .btn.primary:hover{opacity:.88;text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--fg);text-decoration:none}
+
+  .pagehead{padding:52px 0 8px}
+  .pagehead h1{font-size:clamp(30px,4.6vw,44px);margin:0 0 12px}
+  .pagehead p{font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:680px;margin:0}
+  .badge{display:inline-block;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:18px}
+
+  section{padding:34px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  h2{font-size:23px;margin:0 0 10px;scroll-margin-top:80px}
+  h3{font-size:16px;margin:22px 0 8px}
+  section{scroll-margin-top:80px}
+  p{margin:0 0 14px;color:var(--muted)}
+  p b,li b{color:var(--fg)}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:700px}
+  ol,ul{color:var(--muted);margin:0 0 14px;padding-left:20px}
+  li{margin:6px 0}
+
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-family:var(--mono);font-size:13px;margin:0 0 14px;line-height:1.5}
+  code{font-family:var(--mono)}
+  p code,li code,td code,th code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:12.5px;color:var(--fg)}
+
+  table{border-collapse:collapse;width:100%;font-size:14px;margin:0 0 14px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;color:var(--muted)}
+  th{background:var(--panel2);font-weight:600;color:var(--fg);white-space:nowrap}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--fg)}
+  .card p{margin:0;font-size:14px}
+  .verified{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--fg);border-radius:10px;padding:12px 16px;margin:0 0 16px;font-size:14px;color:var(--muted)}
+  .verified b{color:var(--fg)}
+
+  .toc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:22px 0 6px}
+  .toc strong{font-size:13px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+  .toc ul{list-style:none;margin:10px 0 0;padding:0;columns:2;column-gap:24px}
+  @media(max-width:600px){.toc ul{columns:1}}
+  .toc a{color:var(--muted);text-decoration:none;font-size:14px;display:block;padding:3px 0}
+  .toc a:hover{color:var(--fg)}
+
+  footer{padding:44px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+  footer a{color:var(--fg)}
+
+  @media(max-width:720px){
+    .menu-btn{display:grid}
+    .nav{position:absolute;left:0;right:0;top:64px;margin:0;flex-direction:column;align-items:stretch;gap:0;
+         background:var(--bg);border-bottom:1px solid var(--line);padding:8px 20px 16px;
+         transform:translateY(-8px);opacity:0;pointer-events:none;transition:.16s ease}
+    .nav.open{transform:none;opacity:1;pointer-events:auto}
+    .nav a{padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px}
+    .nav a:last-of-type{border-bottom:0}
+  }
+</style>
+</head>
+<body id="top">
+<header><div class="wrap navbar">
+  <a class="logo" href="/" aria-label="AI2Web home"><img src="/ai2web-logo-white.svg" width="53" height="32" alt="AI2Web" fetchpriority="high" decoding="async" /></a>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="/#why">Why</a>
+    <a href="/#how">How</a>
+    <a href="/#one-place">One place</a>
+    <a href="/#support">Support</a>
+    <a href="/validator">Validator</a>
+    <a href="/docs">Docs</a>
+    <a href="https://github.com/ai2web-foundation">GitHub</a>
+  </nav>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle black / white theme" title="Toggle theme">☀</button>
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+</div></header>
+
+<main class="wrap">
+
+  <div class="pagehead">
+    <span class="badge">Connect · one URL · works with any MCP client</span>
+    <h1>Connect AI2Web to your assistant.</h1>
+    <p>Every AI-ready site exposes one agent entry point: its <code>/ai2w/mcp</code> endpoint. Add that URL to Claude, ChatGPT, Grok or any Model Context Protocol client and the site's actions become tools the assistant can call. No vendor has to adopt <code>ai2w</code> first.</p>
+  </div>
+
+  <div class="toc" aria-label="On this page">
+    <strong>On this page</strong>
+    <ul>
+      <li><a href="#endpoint">The one endpoint</a></li>
+      <li><a href="#claude">Claude</a></li>
+      <li><a href="#chatgpt">ChatGPT</a></li>
+      <li><a href="#grok">Grok</a></li>
+      <li><a href="#any">Any MCP client</a></li>
+      <li><a href="#verified">How this was verified</a></li>
+    </ul>
+  </div>
+
+  <section id="endpoint">
+    <h2>The one endpoint</h2>
+    <p class="lead">An AI2Web manifest advertises an <code>mcp</code> transport. That endpoint speaks the Model Context Protocol over Streamable HTTP, so any MCP-capable assistant can connect to it as a remote server.</p>
+    <p>Try it with the public demo store:</p>
+    <pre>https://store.ai2web.dev/ai2w/mcp</pre>
+    <p>To find the endpoint for any site, read its manifest at <code>/ai2w</code> and look under <code>transports.mcp.endpoint</code>. If a site is AI-ready, that is the only URL you need.</p>
+  </section>
+
+  <section id="claude">
+    <h2>Claude</h2>
+    <div class="verified"><b>Verified live on 2026-07-16</b> against <code>store.ai2web.dev/ai2w/mcp</code>: initialize, tools list and a tool call all succeeded (transcript below). The in-product connector screen changes over time; confirm the current path in your account.</div>
+    <p><b>Claude apps and web.</b> Open <b>Settings → Connectors → Add custom connector</b>, then paste the <code>/ai2w/mcp</code> URL as a remote MCP server. Once added, the site's actions appear as tools in a conversation.</p>
+    <p><b>Claude Code.</b> Add it from the terminal:</p>
+    <pre>claude mcp add --transport http ai2web-store https://store.ai2web.dev/ai2w/mcp</pre>
+    <p>Then ask, for example, "check stock for SKU DEMO-001" and the assistant calls the <code>check_stock</code> tool.</p>
+  </section>
+
+  <section id="chatgpt">
+    <h2>ChatGPT</h2>
+    <div class="verified"><b>Same endpoint, same protocol.</b> ChatGPT connects to remote MCP servers over Streamable HTTP; the demo endpoint was verified with that transport on 2026-07-16.</div>
+    <p>On plans that expose connectors and developer mode, add a custom connector / MCP server and paste the <code>/ai2w/mcp</code> URL. ChatGPT lists the site's tools and calls them during a chat. Availability of custom connectors depends on your ChatGPT plan; confirm the current option in <b>Settings → Connectors</b>.</p>
+  </section>
+
+  <section id="grok">
+    <h2>Grok</h2>
+    <div class="verified"><b>Two paths, one endpoint.</b></div>
+    <p><b>In the assistant.</b> Where Grok supports remote MCP connectors, add the <code>/ai2w/mcp</code> URL as a custom server.</p>
+    <p><b>Via the API.</b> xAI's API is OpenAI-compatible, so you can attach the same endpoint as a remote MCP tool through the Responses API's remote-MCP support, pointing the server URL at <code>/ai2w/mcp</code>. The model then calls the site's tools as part of its response.</p>
+  </section>
+
+  <section id="any">
+    <h2>Any MCP client</h2>
+    <p class="lead">The endpoint is a standard Streamable HTTP MCP server, so anything that speaks MCP can use it, not just the assistants above.</p>
+    <p>Two transport details worth knowing when you build or debug a client:</p>
+    <ul>
+      <li>Requests must send <code>Accept: application/json, text/event-stream</code>. Responses are returned as server-sent events.</li>
+      <li>The server is session based: <code>initialize</code> returns an <code>Mcp-Session-Id</code> response header that you send back on every subsequent request.</li>
+    </ul>
+    <p>Discovery, the manifest, and the same actions are also available over plain REST for clients that do not speak MCP. See the <a href="/docs#transports">transports</a> section of the docs.</p>
+  </section>
+
+  <section id="verified">
+    <h2>How this was verified</h2>
+    <p class="lead">These steps are not asserted. This exact exchange was reproduced against the live demo store on 2026-07-16. You can run it yourself.</p>
+
+    <h3>1. Initialize (returns a session id)</h3>
+    <pre>curl -sD - -o /dev/null -X POST https://store.ai2web.dev/ai2w/mcp \
+  -H "accept: application/json, text/event-stream" \
+  -H "content-type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize",
+       "params":{"protocolVersion":"2025-06-18","capabilities":{},
+       "clientInfo":{"name":"demo","version":"1.0"}}}'
+
+# response headers include:  mcp-session-id: &lt;id&gt;
+# body: {"result":{"protocolVersion":"2025-06-18",
+#   "serverInfo":{"name":"ai2w:Example Store","version":"0.1"}, ...}}</pre>
+
+    <h3>2. List the tools</h3>
+    <pre>curl -s -X POST https://store.ai2web.dev/ai2w/mcp \
+  -H "accept: application/json, text/event-stream" \
+  -H "content-type: application/json" \
+  -H "mcp-session-id: &lt;id&gt;" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+
+# tools: check_stock, track_order, report_issue, start_return,
+#        request_refund, check_return_status, ask_store_agent</pre>
+
+    <h3>3. Call a tool</h3>
+    <pre>curl -s -X POST https://store.ai2web.dev/ai2w/mcp \
+  -H "accept: application/json, text/event-stream" \
+  -H "content-type: application/json" \
+  -H "mcp-session-id: &lt;id&gt;" \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call",
+       "params":{"name":"check_stock","arguments":{"sku":"DEMO-001"}}}'
+
+# result: {"sku":"DEMO-001","available":true,"price":"20.00",
+#          "currency":"GBP","delivery":"2-4 working days"}</pre>
+
+    <p>Destructive tools such as <code>request_refund</code> return a preview to approve first; nothing changes state without confirmation. That safe-action model is described in the <a href="/docs#security">security section</a> of the docs.</p>
+
+    <div class="cta" style="margin-top:6px">
+      <a class="btn primary" href="/validator">Check your own site</a>
+      <a class="btn ghost" href="/docs">Read the docs</a>
+    </div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">
+  <div style="display:inline-flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
+    <a href="https://www.producthunt.com/products/ai2web?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-ai2web" target="_blank" rel="noopener noreferrer"><img alt="AI2Web - Describe your site once. Every AI agent can use it. | Product Hunt" width="250" height="54" style="max-width:100%;height:auto" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1193322&amp;theme=dark&amp;t=1783854932637" /></a>
+    <a href="https://fazier.com/launches/ai2web.dev" target="_blank" rel="noopener noreferrer"><img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&amp;theme=dark" width="250" alt="Fazier badge" style="max-width:100%;height:auto" /></a>
+    <a href="https://smollaunch.com" target="_blank" rel="noopener noreferrer"><img src="https://smollaunch.com/badges/featured-dark.svg" alt="AI2Web - Featured on Smol Launch" loading="lazy" width="250" height="60" style="max-width:100%;height:auto" /></a>
+    <a href="https://startupbase.io/products/ai2web?utm_source=startupbase&amp;utm_medium=badge&amp;utm_campaign=featured-badge-dark" target="_blank" rel="noopener noreferrer"><img src="https://statics.startupbase.io/site/badges/featured-on-sb-dark.svg" alt="Featured on StartupBase" loading="lazy" height="55" style="height:55px;width:auto;max-width:100%" /></a>
+    <a href="https://startupfa.me/s/ai2web?utm_source=ai2web.dev" target="_blank" rel="noopener noreferrer"><img src="https://startupfa.me/badges/featured/dark.webp" alt="AI2Web - Featured on Startup Fame" loading="lazy" width="171" height="54" style="max-width:100%;height:auto" /></a>
+    <a href="https://peerlist.io/rolandfarkas/project/ai2web" target="_blank" rel="noopener noreferrer"><img src="https://peerlist.io/api/v1/projects/embed/PRJH7B87MEBAD67BP2699NRAB9MOR9?showUpvote=true&amp;theme=dark" alt="AI2Web on Peerlist" loading="lazy" style="width:auto;height:72px;max-width:100%" /></a>
+  </div><br/><br/>
+  AI2Web Foundation &middot; protocol &amp; spec CC-BY 4.0 &middot; code MIT &middot; <a href="https://ai2web.dev">ai2web.dev</a> &middot; <a href="/privacy">Privacy</a>
+</div></footer>
+
+<script>
+(function(){
+  var saved = localStorage.getItem('ai2w-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  var btn = document.getElementById('themeBtn');
+  function glyph(){ btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; }
+  glyph();
+  btn.addEventListener('click', function(){
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ai2w-theme', next); glyph();
+  });
+})();
+(function(){
+  var nav = document.getElementById('nav'), btn = document.getElementById('menuBtn');
+  btn.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? '✕' : '☰';
+  });
+  nav.addEventListener('click', function(e){ if(e.target.tagName==='A'){ nav.classList.remove('open'); btn.textContent='☰'; btn.setAttribute('aria-expanded','false'); } });
+})();
+</script>
+</body>
+</html>
