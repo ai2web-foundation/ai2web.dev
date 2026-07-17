@@ -236,8 +236,10 @@ const manifest = ai2web({ name: "Example Store", url: "https://store.example.com
     <pre>GET  /.well-known/ai2w    discovery anchor (required) - points to the manifest
 GET  /ai2w                the capability manifest (canonical home)
 POST /ai2w/negotiate      agree a capability set + transport
-GET  /ai2w/{module}       content · products · actions · events · search · agent</pre>
-    <p><code>/ai2w</code> is the RECOMMENDED canonical endpoint; <code>/.well-known/ai2w</code> is the fixed anchor that carries or points to it. Discovery is read-only and safe: fetching a manifest never changes state. If a neutral cross-vendor discovery standard emerges, AI2Web is designed to be carried by it rather than competing.</p>
+GET  /ai2w/{module}       content · products · actions · events · search · agent
+GET  /llms.txt            plain-text summary + links, projected from the manifest
+GET  /.well-known/agent.json   generic agent-capability projection</pre>
+    <p><code>/ai2w</code> is the RECOMMENDED canonical endpoint; <code>/.well-known/ai2w</code> is the fixed anchor that carries or points to it. Discovery is read-only and safe: fetching a manifest never changes state. The <code>/llms.txt</code> and <code>/.well-known/agent.json</code> routes are projections of the same manifest, so agents that speak those formats can use your site without parsing <code>ai2w</code> first, while <code>/ai2w</code> stays authoritative for execution. The SDK server handlers emit all of these from one manifest. If a neutral cross-vendor discovery standard emerges, AI2Web is designed to be carried by it rather than competing.</p>
   </section>
 
   <section id="capabilities">
