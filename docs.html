@@ -310,6 +310,11 @@ GET  /.well-known/agent.json   generic agent-capability projection</pre>
 npm install @ai2web/server        # /ai2w route handler (Node + Cloudflare)
 npm install @ai2web/mcp-bridge    # expose your capabilities as an MCP server
 npm install @ai2web/react         # hooks + &lt;Ai2wBadge&gt;</pre>
+    <p>Same capability model in every other language:</p>
+    <pre>composer require ai2web/ai2web                    # PHP
+pip install ai2web                                # Python
+go get github.com/ai2web-foundation/ai2web-go     # Go
+dotnet add package Ai2Web                         # .NET</pre>
     <p>The JavaScript packages ship as standard ESM with bundled types, so they run unchanged in plain JavaScript. A build-free <code>&lt;ai2w-badge&gt;</code> web component drops into any HTML page with no bundler. Score a manifest programmatically:</p>
     <pre>import { discover, validateManifest } from "@ai2web/core";
 
