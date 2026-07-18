@@ -1,0 +1,5 @@
+# Cloudflare Pages config for the AI2Web site (static Astro output).
+# Deploy with: npm run build && npx wrangler pages deploy dist
+name = "ai2web"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "dist"

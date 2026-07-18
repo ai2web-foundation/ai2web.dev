@@ -1,0 +1,235 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeTabs from "../components/CodeTabs.astro";
+import { INSTALL, QUICKSTART, SERVE } from "../data/examples";
+
+const toc = [
+  { id: "start", label: "Quick start" },
+  { id: "install", label: "Install an SDK" },
+  { id: "manifest", label: "The manifest" },
+  { id: "serve", label: "Serve it" },
+  { id: "discovery", label: "Discovery" },
+  { id: "capabilities", label: "Capability modules" },
+  { id: "actions", label: "Actions & approval" },
+  { id: "transports", label: "Transports" },
+  { id: "assistants", label: "Connect an assistant" },
+];
+
+const modules = [
+  ["content", "Readable, structured content: articles, pages, docs, FAQs", "RFC-0008"],
+  ["search", "A query interface over content and catalog", "RFC-0008"],
+  ["commerce", "Products, cart, checkout, returns, inventory", "RFC-0005"],
+  ["support", "Order tracking, returns, refunds, cancellations, issues", "RFC-0007"],
+  ["actions", "Declared operations an agent can call", "RFC-0002"],
+  ["events", "Subscribable events (order shipped, price drop)", "RFC-0002"],
+  ["agent", "The site's own AI agent (agent-to-agent)", "RFC-0004"],
+  ["identity", "Legal name, policies, support and security contacts", "Spec 4.3"],
+  ["extensions", "Namespaced x-<vendor> extensions", "RFC-0010"],
+];
+---
+
+<Base title="Docs - AI2Web" path="/docs" description="Practical guide to AI2Web: publish a capability manifest at /ai2w, serve it across MCP, ACP, REST and more, and score your AI readiness. Code examples in every language.">
+  <div class="docs">
+    <aside class="docs__side">
+      <nav class="toc" aria-label="On this page">
+        <span class="toc__h eyebrow" data-n="//">On this page</span>
+        {toc.map((t) => <a href={`#${t.id}`} data-toc={t.id}>{t.label}</a>)}
+        <hr class="rule" />
+        <a class="toc__ext" href="https://github.com/ai2web-foundation/ai2web-spec" target="_blank" rel="noopener">Specification &rarr;</a>
+        <a class="toc__ext" href="https://github.com/ai2web-foundation/ai2web-spec/tree/main/rfcs" target="_blank" rel="noopener">RFCs &rarr;</a>
+      </nav>
+    </aside>
+
+    <article class="docs__body">
+      <header class="docs__hero">
+        <span class="eyebrow reveal" data-n="//">Documentation · ai2w v0.2</span>
+        <h1 class="display docs__title reveal" data-d="1">Make your site understandable to every AI.</h1>
+        <p class="lede reveal" data-d="2">
+          Describe your website once with a capability manifest at <code class="tick">/ai2w</code>.
+          AI2Web exposes it across MCP, ACP, REST, GraphQL and more, with discovery, validation and
+          a safe action model built in. This is the practical guide; normative detail lives in the{" "}
+          <a href="https://github.com/ai2web-foundation/ai2web-spec">specification</a>.
+        </p>
+      </header>
+
+      <section id="start" class="ds">
+        <span class="eyebrow" data-n="01">Quick start</span>
+        <h2 class="ds__h">Three steps to AI-ready</h2>
+        <ol class="steps">
+          <li><strong>Publish a manifest</strong> at <code class="tick">/ai2w</code> - by hand, via an SDK, or the WordPress plugin.</li>
+          <li><strong>Add the discovery anchor</strong> at <code class="tick">/.well-known/ai2w</code> pointing to it.</li>
+          <li><strong>Validate + connect</strong> - score it, then add your <code class="tick">/ai2w/mcp</code> endpoint to any assistant.</li>
+        </ol>
+        <p class="dim">Validate any site from the command line, or in the browser with the <a href="/validator">validator</a>:</p>
+        <CodeTabs group="q" tabs={[{ label: "CLI", lang: "bash", code: "npx -p @ai2web/validator ai2web validate https://your-site.com" }]} />
+      </section>
+
+      <section id="install" class="ds">
+        <span class="eyebrow" data-n="02">Install</span>
+        <h2 class="ds__h">Pick your language</h2>
+        <p class="dim">Five SDKs plus a WordPress plugin, all producing the same manifest and scoring identically.</p>
+        <CodeTabs group="lang" tabs={INSTALL} />
+      </section>
+
+      <section id="manifest" class="ds">
+        <span class="eyebrow" data-n="03">The manifest</span>
+        <h2 class="ds__h">Describe your site once</h2>
+        <p class="dim">
+          Capabilities are a map of <code class="tick">module &rarr; boolean | object</code>. A boolean
+          declares presence; an object adds detail such as an endpoint. Commerce is one module among
+          equals - the model is not commerce-centric.
+        </p>
+        <CodeTabs group="lang" tabs={QUICKSTART} />
+      </section>
+
+      <section id="serve" class="ds">
+        <span class="eyebrow" data-n="04">Serve it</span>
+        <h2 class="ds__h">One handler, every route</h2>
+        <p class="dim">
+          The SDK server handlers emit <code class="tick">/ai2w</code>, the well-known anchor, actions,
+          and the <code class="tick">/llms.txt</code> + <code class="tick">/.well-known/agent.json</code>{" "}
+          projections from a single manifest.
+        </p>
+        <CodeTabs group="lang" tabs={SERVE} />
+      </section>
+
+      <section id="discovery" class="ds">
+        <span class="eyebrow" data-n="05">Discovery</span>
+        <h2 class="ds__h">Endpoints</h2>
+        <CodeTabs group="d" tabs={[{ label: "Routes", lang: "text", code: `GET  /.well-known/ai2w   discovery anchor (required) - carries or points to the manifest
+GET  /ai2w               the capability manifest (recommended canonical endpoint)
+GET  /ai2w/mcp           MCP transport for actions and tools
+GET  /llms.txt           projection for llms.txt-aware agents
+GET  /.well-known/agent.json  projection for agent.json-aware agents
+POST /ai2w/negotiate     capability + transport negotiation` }]} />
+        <p class="dim">
+          Discovery is read-only and safe: fetching a manifest never changes state. The{" "}
+          <code class="tick">/llms.txt</code> and <code class="tick">agent.json</code> routes are
+          projections of the same manifest, so agents that speak those formats work without parsing{" "}
+          <code class="tick">ai2w</code> first, while <code class="tick">/ai2w</code> stays authoritative
+          for execution.
+        </p>
+      </section>
+
+      <section id="capabilities" class="ds">
+        <span class="eyebrow" data-n="06">Capability modules</span>
+        <h2 class="ds__h">The vocabulary</h2>
+        <div class="tablewrap card">
+          <table class="mtable">
+            <thead><tr><th>Module</th><th>What it declares</th><th>Spec</th></tr></thead>
+            <tbody>
+              {modules.map(([m, d, r]) => (
+                <tr><td><code class="tick">{m}</code></td><td>{d}</td><td class="mono dim">{r}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="actions" class="ds">
+        <span class="eyebrow" data-n="07">Actions &amp; approval</span>
+        <h2 class="ds__h">Safe by construction</h2>
+        <p class="dim">
+          High-risk actions never auto-run. The flow is: <strong>discover &rarr; prepare &rarr; the site
+          returns a preview &rarr; the user approves &rarr; execute &rarr; confirmation with an audit
+          reference</strong>. In the reference adapters this is enforced in one shared executor, and a{" "}
+          <code class="tick">high</code>-risk action previews even if a manifest tries to declare{" "}
+          <code class="tick">approval: false</code>. Credentials are never sent cross-origin, and outbound
+          targets are checked against an SSRF guard before every request.
+        </p>
+      </section>
+
+      <section id="transports" class="ds">
+        <span class="eyebrow" data-n="08">Transports</span>
+        <h2 class="ds__h">One model, many protocols</h2>
+        <p class="dim">
+          The executing adapters - <code class="tick">@ai2web/mcp-bridge</code>,{" "}
+          <code class="tick">acp-adapter</code>, <code class="tick">graphql-adapter</code>,{" "}
+          <code class="tick">openapi-adapter</code> - all route through one guarded executor, so the
+          approval, same-origin credential and SSRF rules hold uniformly across every transport.
+        </p>
+      </section>
+
+      <section id="assistants" class="ds">
+        <span class="eyebrow" data-n="09">Connect an assistant</span>
+        <h2 class="ds__h">Works with connectors today</h2>
+        <p class="dim">An AI2Web MCP endpoint works with existing assistant connectors - no vendor needs to adopt <code class="tick">ai2w</code> first.</p>
+        <ul class="conn">
+          <li><strong>Claude:</strong> add your <code class="tick">/ai2w/mcp</code> URL as a custom connector, or <code class="tick">claude mcp add --transport http</code> in Claude Code.</li>
+          <li><strong>ChatGPT:</strong> add the same endpoint via developer mode; Streamable HTTP is supported.</li>
+          <li><strong>Grok:</strong> point it at the same <code class="tick">/ai2w/mcp</code> endpoint; xAI's API supports MCP servers.</li>
+          <li><strong>Any MCP client:</strong> point it at <code class="tick">/ai2w/mcp</code>. The network connector fronts many sites at once.</li>
+        </ul>
+        <div class="docs__cta card">
+          <div>
+            <h3>Ready to check your site?</h3>
+            <p class="dim">Get an AI Readiness score in seconds.</p>
+          </div>
+          <a class="btn btn--primary" href="/validator">Scan your site</a>
+        </div>
+      </section>
+    </article>
+  </div>
+
+  <style>
+    .docs { max-width: var(--maxw); margin: 0 auto; padding: clamp(28px, 5vw, 56px) var(--pad) 0; display: grid; grid-template-columns: 210px 1fr; gap: clamp(28px, 5vw, 64px); }
+    .docs__side { position: relative; }
+    .toc { position: sticky; top: 84px; display: grid; gap: 3px; align-content: start; }
+    .toc__h { margin-bottom: 8px; }
+    .toc a { color: var(--text-dim); font-size: 0.88rem; padding: 5px 10px; border-radius: 6px; border-left: 2px solid transparent; transition: color .14s ease, border-color .14s ease; }
+    .toc a:hover { color: var(--text); }
+    .toc a[data-active] { color: var(--accent-bright); border-left-color: var(--accent); }
+    .toc .rule { margin: 12px 0; }
+    .toc__ext { color: var(--text-faint); font-size: 0.84rem; }
+
+    .docs__body { min-width: 0; }
+    .docs__hero { padding-bottom: 20px; }
+    .docs__title { font-size: clamp(2rem, 4.5vw, 3rem); margin: 16px 0 20px; }
+    .ds { padding-block: clamp(34px, 5vw, 52px); border-top: 1px solid var(--line); }
+    .ds:first-of-type { border-top: 0; }
+    .ds__h { font-size: clamp(1.4rem, 2.6vw, 1.9rem); margin: 12px 0 16px; letter-spacing: -0.02em; }
+    .ds p { margin-bottom: 18px; line-height: 1.65; }
+    .ds a:not(.btn) { color: var(--accent); } .ds a:not(.btn):hover { color: var(--accent-bright); }
+
+    .steps { display: grid; gap: 10px; margin: 4px 0 22px; padding-left: 0; list-style: none; counter-reset: s; }
+    .steps li { position: relative; padding: 14px 16px 14px 48px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); counter-increment: s; }
+    .steps li::before { content: counter(s); position: absolute; left: 14px; top: 13px; width: 22px; height: 22px; display: grid; place-items: center; background: var(--accent-glow); color: var(--accent-bright); border-radius: 6px; font-family: var(--mono); font-size: 0.78rem; }
+    .steps strong, .conn strong { color: var(--text); font-weight: 600; }
+
+    .tablewrap { overflow-x: auto; }
+    .mtable { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .mtable th { text-align: left; font-weight: 500; color: var(--text-faint); font-family: var(--mono); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    .mtable td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--text-dim); vertical-align: top; }
+    .mtable tr:last-child td { border-bottom: 0; }
+    .mtable td:first-child { white-space: nowrap; }
+
+    .conn { display: grid; gap: 12px; margin: 6px 0 24px; padding-left: 18px; }
+    .conn li { color: var(--text-dim); line-height: 1.6; }
+
+    .docs__cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 28px; flex-wrap: wrap; }
+    .docs__cta h3 { font-size: 1.15rem; margin-bottom: 4px; }
+
+    @media (max-width: 860px) {
+      .docs { grid-template-columns: 1fr; }
+      .docs__side { display: none; }
+    }
+  </style>
+
+  <script>
+    // Highlight the current section in the TOC.
+    const links = new Map<string, HTMLElement>();
+    document.querySelectorAll<HTMLElement>("[data-toc]").forEach((a) => links.set(a.dataset.toc!, a));
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.removeAttribute("data-active"));
+            links.get(e.target.id)?.setAttribute("data-active", "");
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px" }
+    );
+    document.querySelectorAll(".ds[id]").forEach((s) => spy.observe(s));
+  </script>
+</Base>

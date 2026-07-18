@@ -1,16 +1,24 @@
-# Cloudflare Wrangler local state, cache and build output (never commit)
-.wrangler/
+# build output
+dist/
+# generated types
+.astro/
 
-# Node
+# dependencies
 node_modules/
+
+# logs
 npm-debug.log*
+yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Local env / secrets
-.dev.vars
+
+# environment variables
 .env
-.env.*
+.env.production
 
-# OS junk
+# macOS-specific files
 .DS_Store
-Thumbs.db
+
+# jetbrains setting folder
+.idea/

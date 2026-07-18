@@ -1,0 +1,96 @@
+---
+import Base from "../layouts/Base.astro";
+
+const updated = "13 July 2026";
+const sections = [
+  {
+    h: "1. The website (ai2web.dev)",
+    p: [
+      "The informational website is a static site. It sets no advertising or cross-site tracking cookies and does not build a profile of you. Your browser and our hosting provider (Cloudflare) process standard request metadata such as IP address and user agent to serve pages and protect against abuse; this is transient operational data, not something we use to identify you.",
+    ],
+  },
+  {
+    h: "2. The Validator (validator.ai2web.dev)",
+    p: [
+      "The Validator scores how well a website supports AI2Web. When you submit a URL, our service fetches that site's public AI2Web manifest server-side and returns a score, a compliance tier and per-capability checks.",
+    ],
+    li: [
+      "Only the URL you submit is processed, and only to fetch and score its public manifest.",
+      "We do not require an account, and we do not store the URLs you validate as personal records.",
+      "The Validator refuses to fetch private, internal or non-public addresses.",
+    ],
+  },
+  {
+    h: "3. The AI Readiness Checker browser extension",
+    li: [
+      "What it does: when you click the extension's toolbar icon, it reads the origin (scheme and hostname) of the tab you are currently viewing and sends only that origin to validator.ai2web.dev to score that site's public AI2Web readiness. The result is shown in the popup.",
+      "What it does not do: it does not run in the background, does not read page content, does not track your browsing history, does not store anything on your device, uses no cookies, analytics, advertising or third-party trackers, and never sends data anywhere other than the AI2Web Validator. It requests the minimum permissions needed: activeTab (only when you click) and network access to the Validator host.",
+    ],
+    p: [
+      "The origin is sent only at the moment you click the icon, is used solely to fetch and score the site's public manifest, and is not retained as a personal record.",
+    ],
+  },
+  {
+    h: "4. The Discovery Network (directory.ai2web.dev)",
+    p: [
+      "The optional Discovery Network is a directory of sites that support AI2Web. It stores only public metadata that a site owner chooses to submit (such as a site name, URL, capabilities and manifest location). It does not contain personal data about visitors.",
+    ],
+  },
+  {
+    h: "5. Data we do not collect",
+    li: [
+      "We do not sell, rent or share personal data.",
+      "We do not serve advertising or use advertising identifiers.",
+      "We do not build behavioural profiles or track you across sites.",
+    ],
+  },
+  {
+    h: "6. Changes",
+    p: ['We may update this policy as AI2Web evolves. Material changes will be reflected by the "last updated" date above.'],
+  },
+  {
+    h: "7. Contact",
+    p: ["Questions about this policy or your data: hello@ai2web.dev."],
+  },
+];
+---
+
+<Base title="Privacy - AI2Web" path="/privacy" description="AI2Web privacy policy. Built to be privacy preserving: works only with public website metadata, no advertising, no cross-site tracking, no data selling.">
+  <article class="prose">
+    <header class="prose__head">
+      <span class="eyebrow reveal" data-n="//">Legal</span>
+      <h1 class="display prose__title reveal" data-d="1">Privacy Policy</h1>
+      <p class="dim reveal" data-d="2">Last updated: {updated}</p>
+      <p class="lede reveal" data-d="2">
+        AI2Web is an open protocol, specification and set of tools created by the AI2Web Foundation.
+        The short version: it is built to be privacy preserving, works only with public website
+        metadata, and does not sell data or serve advertising.
+      </p>
+    </header>
+
+    {sections.map((s) => (
+      <section class="prose__sec reveal">
+        <h2>{s.h}</h2>
+        {s.p?.map((para) => <p>{para}</p>)}
+        {s.li && (
+          <ul>
+            {s.li.map((item) => <li>{item}</li>)}
+          </ul>
+        )}
+      </section>
+    ))}
+  </article>
+
+  <style>
+    .prose { max-width: 760px; margin: 0 auto; padding: clamp(32px, 6vw, 72px) var(--pad) 0; }
+    .prose__head { padding-bottom: 12px; }
+    .prose__title { font-size: clamp(2.1rem, 5vw, 3.2rem); margin: 14px 0 10px; }
+    .prose__head .lede { margin-top: 20px; max-width: none; }
+    .prose__sec { padding-block: 26px; border-top: 1px solid var(--line); }
+    .prose__sec h2 { font-size: 1.2rem; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .prose__sec p { color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
+    .prose__sec ul { display: grid; gap: 10px; padding-left: 20px; margin: 6px 0 4px; }
+    .prose__sec li { color: var(--text-dim); line-height: 1.6; }
+    .prose__sec li::marker { color: var(--accent); }
+  </style>
+</Base>

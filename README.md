@@ -1,25 +1,19 @@
 # ai2web.dev
 
-The marketing + docs site and the **web validator**. Self-contained static `index.html` - no build, no external dependencies (works offline, deploy anywhere).
+The AI2Web marketing site and validator, built with [Astro](https://astro.build) and deployed on Cloudflare Pages.
 
-## What's on it
-- Hero + the story: *Describe your website once. AI2Web makes it understandable to every AI.*
-- The layered model: `Capability Model → Framework → Discovery Network → Analytics`.
-- The six questions the manifest answers + transport taxonomy.
-- **Live AI Readiness Validator** - paste a manifest → per-capability ✓/⚠ + score/100 + tier, using the same algorithm as `@ai2web/core` / `npx ai2web validate`.
-
-## Run
-Just open `index.html`, or serve the folder:
 ```bash
-python -m http.server -d ai2web.dev 8080
+npm install
+npm run dev      # local dev server
+npm run build    # static output -> dist/
 ```
 
-## Deploy (Cloudflare Pages)
-It's fully static - deploy the folder directly, no build:
-```bash
-npx wrangler pages deploy ai2web.dev --project-name ai2web-dev
-```
-Or connect the repo in the Cloudflare dashboard with build output dir = `ai2web.dev`. The web validator runs client-side, so no server is needed. To dogfood a live `/ai2w` on the domain, add a Pages Function (or route a Worker using `@ai2web/server`).
+- `src/` - pages, components, layouts, styles and data
+- `public/` - static assets (logos, robots.txt, sitemap.xml, llms.txt, _headers, _redirects)
+- `functions/_middleware.js` - Cloudflare Pages Function that serves the site's own AI2Web
+  endpoints (`/ai2w`, `/.well-known/ai2w`, `/ai2w/content`, `/ai2w/search`, `/ai2w/mcp`,
+  `/ai2w/negotiate`); every other request passes through to the static build.
 
-## Roadmap
-Convert to a full docs site (spec, SDK reference, examples, playground, RFCs) - the source of truth, versioned. This static page is the launch landing + validator MVP.
+See [DEPLOY.md](./DEPLOY.md) for Cloudflare Pages settings.
+
+Licence: MIT.

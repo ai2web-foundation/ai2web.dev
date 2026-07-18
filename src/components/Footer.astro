@@ -1,0 +1,81 @@
+---
+import { NAV, SITE } from "../data/site";
+const year = 2026;
+---
+
+<footer class="ft">
+  <div class="wrap ft__in">
+    <div class="ft__top">
+      <div class="ft__brand">
+        <img src="/ai2web-logo-white.svg" alt="AI2Web" width="120" height="30" class="ft__logo" />
+        <p class="ft__tag dim">{SITE.tagline}</p>
+      </div>
+      <nav class="ft__cols" aria-label="Footer">
+        <div>
+          <h4 class="ft__h mono">Product</h4>
+          <a href="/">Overview</a>
+          <a href="/docs">Docs</a>
+          <a href="/validator">Validator</a>
+        </div>
+        <div>
+          <h4 class="ft__h mono">Protocol</h4>
+          <a href="https://github.com/ai2web-foundation/ai2web-spec" target="_blank" rel="noopener">Specification</a>
+          <a href="https://github.com/ai2web-foundation/ai2web-spec/tree/main/rfcs" target="_blank" rel="noopener">RFCs</a>
+          <a href="/docs#capabilities">Capability model</a>
+        </div>
+        <div>
+          <h4 class="ft__h mono">More</h4>
+          <a href={SITE.ghUrl} target="_blank" rel="noopener">GitHub</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://rolandfarkas.com" target="_blank" rel="noopener">Roland Farkas</a>
+        </div>
+      </nav>
+    </div>
+
+    <hr class="rule" />
+
+    <div class="ft__legal">
+      <span class="dim">AI2Web Foundation · spec CC-BY 4.0 · code MIT · &copy; {year}</span>
+      <button class="ft__theme" data-theme-toggle type="button">Toggle theme</button>
+    </div>
+  </div>
+
+  <div class="ft__mark" aria-hidden="true">AI2WEB</div>
+</footer>
+
+<style>
+  .ft { position: relative; z-index: 1; border-top: 1px solid var(--line); margin-top: 40px; overflow: hidden; }
+  .ft__in { padding-block: clamp(48px, 7vw, 80px) 0; position: relative; z-index: 2; }
+  .ft__top { display: grid; grid-template-columns: 1.3fr 2fr; gap: 48px; }
+  .ft__logo { height: 26px; width: auto; }
+  :root[data-theme="light"] .ft__logo, :root[data-theme="light"] .ft__mark { filter: invert(1); }
+  .ft__tag { margin-top: 16px; max-width: 30ch; font-size: 0.92rem; }
+  .ft__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .ft__cols > div { display: grid; gap: 10px; align-content: start; }
+  .ft__h { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 2px; }
+  .ft__cols a { color: var(--text-dim); font-size: 0.92rem; width: fit-content; transition: color .15s ease; }
+  .ft__cols a:hover { color: var(--accent); }
+  .ft .rule { margin-block: 36px 0; }
+  .ft__legal { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px 30px; flex-wrap: wrap; font-size: 0.85rem; }
+  .ft__theme { background: none; border: 0; color: var(--text-faint); cursor: pointer; font: inherit; }
+  .ft__theme:hover { color: var(--text); }
+
+  .ft__mark {
+    position: absolute; left: 50%; bottom: -0.22em; transform: translateX(-50%);
+    font-family: var(--mono); font-weight: 700; letter-spacing: -0.02em;
+    font-size: clamp(4rem, 20vw, 15rem); line-height: 0.8;
+    color: transparent;
+    background: linear-gradient(180deg, var(--line-2), transparent 78%);
+    -webkit-background-clip: text; background-clip: text;
+    pointer-events: none; user-select: none; white-space: nowrap; z-index: 1;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 780px) {
+    .ft__top { grid-template-columns: 1fr; gap: 34px; }
+    .ft__cols { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .ft__cols { grid-template-columns: 1fr 1fr; }
+  }
+</style>

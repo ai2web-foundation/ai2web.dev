@@ -1,0 +1,232 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="AI Readiness Validator - AI2Web" path="/validator" description="Scan any website's AI Readiness. Get a score out of 100 and a compliance tier, scored exactly like npx ai2web validate. Or paste a manifest to test before you deploy.">
+  <section class="vhero section--tight">
+    <div class="wrap">
+      <span class="eyebrow reveal" data-n="//">Validator</span>
+      <h1 class="display vhero__t reveal" data-d="1">AI Readiness, <span class="grad">scored</span>.</h1>
+      <p class="lede reveal" data-d="2">
+        Enter a site and see how ready it is for AI agents. You get a score out of 100 and a
+        compliance tier, scored exactly like <code class="tick">npx ai2web validate</code>.
+      </p>
+
+      <form class="vscan reveal" data-d="3" id="urlForm">
+        <div class="vscan__field">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input id="siteurl" class="mono" type="text" inputmode="url" spellcheck="false" placeholder="https://your-site.com" aria-label="Website URL" />
+        </div>
+        <button class="btn btn--primary" type="submit" id="scanBtn">Scan</button>
+      </form>
+      <p class="vscan__hint mono dim" id="uhint"></p>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="wrap vgrid">
+      <!-- Result -->
+      <div class="result card" id="result" hidden>
+        <div class="result__top">
+          <div class="ring" id="ringWrap">
+            <svg viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="37" class="ring__track"/><circle cx="42" cy="42" r="37" class="ring__val" id="ringVal"/></svg>
+            <span class="ring__n mono" id="score">-</span>
+          </div>
+          <div class="result__meta">
+            <strong id="tier">Tier</strong>
+            <span class="dim mono" id="source"></span>
+          </div>
+        </div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+
+      <!-- Paste -->
+      <div class="paste card">
+        <div class="paste__head">
+          <h2 class="paste__h">Or paste a manifest</h2>
+          <button class="btn btn--ghost btn--sm" type="button" id="exampleBtn">Load example</button>
+        </div>
+        <p class="dim paste__lede">Test a manifest before you deploy. Scored in your browser - nothing is sent anywhere.</p>
+        <textarea id="input" class="mono" spellcheck="false" placeholder='Paste your /ai2w manifest JSON here...'></textarea>
+        <div class="paste__row">
+          <button class="btn btn--primary" type="button" id="validateBtn">Validate</button>
+          <span class="mono dim" id="phint"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .vhero { padding-top: clamp(40px, 7vw, 80px); }
+    .vhero__t { font-size: clamp(2.2rem, 5vw, 3.6rem); margin: 14px 0 20px; }
+    .vscan { display: flex; gap: 10px; margin-top: 28px; max-width: 560px; }
+    .vscan__field { flex: 1 1 auto; display: flex; align-items: center; gap: 10px; min-width: 0; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 0 14px; transition: border-color .16s ease, box-shadow .16s ease; }
+    .vscan__field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .vscan__field svg { width: 17px; height: 17px; color: var(--text-faint); flex: 0 0 auto; }
+    .vscan__field input { flex: 1 1 auto; min-width: 0; background: none; border: 0; color: var(--text); font-size: 0.95rem; padding: 14px 0; }
+    .vscan__field input:focus { outline: none; }
+    .vscan__field input::placeholder { color: var(--text-faint); }
+    .vscan__hint { margin-top: 12px; font-size: 0.84rem; min-height: 1.2em; }
+
+    .vgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    @media (max-width: 820px) { .vgrid { grid-template-columns: 1fr; } }
+
+    .result { padding: 26px 28px; }
+    .result[hidden] { display: none; }
+    .result__top { display: flex; align-items: center; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .ring { position: relative; width: 84px; height: 84px; flex: 0 0 auto; }
+    .ring svg { width: 84px; height: 84px; transform: rotate(-90deg); }
+    .ring__track { fill: none; stroke: var(--line); stroke-width: 5; }
+    .ring__val { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 232.5; stroke-dashoffset: 232.5; transition: stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1), stroke .3s ease; }
+    .ring__n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.3rem; font-weight: 600; }
+    .result__meta { display: grid; gap: 3px; }
+    .result__meta strong { font-size: 1.15rem; }
+    .checks { list-style: none; display: grid; gap: 8px; margin-top: 18px; }
+    .checks li { display: flex; align-items: baseline; gap: 10px; font-size: 0.9rem; color: var(--text-dim); }
+    .checks .sym { flex: 0 0 auto; font-size: 0.85rem; }
+    .checks .ok .sym { color: var(--accent-bright); }
+    .checks .warn .sym { color: var(--warn); }
+    .checks .err .sym { color: var(--bad); }
+    .checks .hint { color: var(--text-faint); }
+    .checks .hint a { color: var(--accent); }
+
+    .paste { padding: 22px 24px; display: grid; gap: 12px; align-content: start; }
+    .paste__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .paste__h { font-size: 1.1rem; }
+    .paste__lede { font-size: 0.88rem; margin: 0; }
+    .btn--sm { padding: 0.4em 0.7em; font-size: 0.82rem; }
+    #input { width: 100%; min-height: 200px; resize: vertical; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm); color: var(--text); padding: 14px; font-size: 0.82rem; line-height: 1.55; }
+    #input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .paste__row { display: flex; align-items: center; gap: 14px; }
+
+    @media (max-width: 520px) { .vscan { flex-direction: column; } .vscan .btn { width: 100%; justify-content: center; } }
+  </style>
+
+  <script>
+    const API = "https://validator.ai2web.dev";
+    const $ = (id: string) => document.getElementById(id)!;
+    const esc = (s: unknown) =>
+      String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
+
+    // Web port of @ai2web/core validateManifest (spec 9/11) - same algorithm as the SDKs.
+    function validate(m: any) {
+      const errors: string[] = [], checks: { ok: boolean; label: string; hint: string | null }[] = [];
+      const has = (v: any) => v === true || (v && typeof v === "object" && v.enabled === true);
+      const cap = (n: string) => m.capabilities && m.capabilities[n];
+      if (m.protocol !== "ai2w") errors.push("protocol must be 'ai2w'");
+      if (!/^\d+\.\d+(\.\d+)?$/.test(String(m.version == null ? "" : m.version))) errors.push("version missing/invalid");
+      ["name", "url", "type"].forEach((k) => { if (!(m.site && m.site[k])) errors.push("site." + k + " missing"); });
+      if (!m.capabilities || !Object.keys(m.capabilities).length) errors.push("capabilities empty");
+      const actionsExist = has(cap("actions")) || (Array.isArray(m.actions) && m.actions.length > 0) || ["commerce", "booking"].some((c) => has(cap(c)));
+      let score = 0;
+      const add = (ok: boolean, pts: number, label: string, hint?: string) => { checks.push({ ok, label, hint: ok ? null : hint ?? null }); if (ok) score += pts; };
+      add(errors.length === 0, 30, "Valid discovery manifest", "fix errors");
+      add(has(cap("content")), 6, "Content", "expose content module");
+      add(has(cap("commerce")) || has(cap("booking")) || has(cap("services")), 6, "Products / services / booking", "expose a commerce/services/booking module");
+      add(has(cap("search")), 4, "Search", "add a search capability");
+      add(actionsExist, 5, "Actions", "declare actions");
+      add(has(cap("events")), 6, "Events / subscriptions", "publish subscribable events");
+      add(!!(m.agent_service && m.agent_service.enabled), 4, "Agent service (A2A)", "expose /ai2w/agent");
+      const commerce = cap("commerce");
+      add(!has(commerce) || (commerce && commerce.checkout === true), 4, "Checkout", "commerce present but checkout missing");
+      add(!!(m.transports && m.transports.mcp && m.transports.mcp.enabled === true), 8, "MCP transport", "expose an MCP endpoint");
+      add(!!(m.transports && ((m.transports.rest && m.transports.rest.enabled) || m.transports.feeds)), 4, "REST / feeds", "expose REST or feeds");
+      const oauthOk = !!(m.auth && Array.isArray(m.auth.methods) && m.auth.methods.indexOf("oauth2") > -1 && m.auth.oauth2 && m.auth.oauth2.pkce === true);
+      const consentDeclared = !!(m.consent && m.consent.requires_user_approval_for && m.consent.requires_user_approval_for.length);
+      add(!actionsExist || oauthOk, 8, "OAuth2 + PKCE", "protected actions need oauth2+pkce");
+      add(!actionsExist || consentDeclared, 7, "Consent declared", "declare consent for sensitive actions");
+      add(!!m.identity, 4, "Identity", "add identity (legal_name, policies)");
+      add(!!m.contact, 4, "Contact", "add support/security contact");
+      score = Math.min(100, score);
+      const basic = errors.length === 0;
+      const standard = basic && !!m.transports && (!actionsExist || consentDeclared) && !!m.contact;
+      const enterprise = standard && !!m.identity && !!m.auth && !!m.rate_limits;
+      const tier = enterprise ? "Enterprise" : standard ? "Standard" : basic ? "Basic" : "Invalid";
+      return { errors, checks, score, tier };
+    }
+
+    function renderResult(r: any, source?: string) {
+      $("result").hidden = false;
+      $("score").textContent = String(r.score);
+      const ring = $("ringVal") as unknown as SVGCircleElement;
+      const C = 232.5;
+      ring.style.strokeDashoffset = String(C - (C * r.score) / 100);
+      ring.style.stroke = r.score >= 90 ? "var(--accent)" : r.score >= 60 ? "var(--warn)" : "var(--bad)";
+      $("tier").textContent = "Tier: " + r.tier + (r.errors && r.errors.length ? " · " + r.errors.length + " error(s)" : "");
+      $("source").textContent = source || "";
+      $("checks").innerHTML =
+        (r.errors || []).map((e: string) => `<li class="err"><span class="sym">✗</span> ${esc(e)}</li>`).join("") +
+        (r.checks || []).filter((c: any) => c.label !== "Valid discovery manifest").map((c: any) =>
+          c.ok
+            ? `<li class="ok"><span class="sym">✓</span> ${esc(c.label)}</li>`
+            : `<li class="warn"><span class="sym">⚠</span> ${esc(c.label)}${c.hint ? ` <span class="hint">- ${esc(c.hint)}</span>` : ""}</li>`
+        ).join("");
+      $("result").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function renderNotFound(url: string) {
+      $("result").hidden = false;
+      $("score").textContent = "n/a";
+      ($("ringVal") as unknown as SVGCircleElement).style.strokeDashoffset = "232.5";
+      $("tier").textContent = "No AI2Web manifest found";
+      $("source").textContent = "";
+      $("checks").innerHTML = `<li class="warn"><span class="sym">⚠</span> ${esc(url)} is not AI-ready yet. <span class="hint"><a href="/docs">How to add AI2Web &rarr;</a></span></li>`;
+    }
+
+    async function checkUrl() {
+      const input = $("siteurl") as HTMLInputElement, hint = $("uhint");
+      let val = (input.value || "").trim();
+      if (!val) { hint.textContent = "enter a URL"; return; }
+      if (!/^https?:\/\//i.test(val)) val = "https://" + val;
+      hint.textContent = "scanning " + val + " ...";
+      ($("scanBtn") as HTMLButtonElement).disabled = true;
+      try {
+        const res = await fetch(API + "/validate?url=" + encodeURIComponent(val));
+        const d = await res.json();
+        hint.textContent = "";
+        if (d.error) { hint.textContent = d.error; return; }
+        if (d.found === false) { renderNotFound(val); return; }
+        renderResult(d, d.source);
+      } catch {
+        hint.textContent = "could not reach the validator, try again";
+      } finally {
+        ($("scanBtn") as HTMLButtonElement).disabled = false;
+      }
+    }
+
+    function runValidate() {
+      const hint = $("phint");
+      let m: any;
+      try { m = JSON.parse(($("input") as HTMLTextAreaElement).value); }
+      catch { hint.textContent = "⚠ invalid JSON"; return; }
+      hint.textContent = "";
+      renderResult(validate(m));
+    }
+
+    function loadExample() {
+      ($("input") as HTMLTextAreaElement).value = JSON.stringify({
+        protocol: "ai2w", version: "0.2",
+        site: { name: "Example Store", url: "https://store.example.com", type: "ecommerce" },
+        identity: { legal_name: "Example Store Ltd" },
+        capabilities: { content: true, commerce: { enabled: true, endpoint: "/ai2w/products", checkout: true }, search: { enabled: true }, events: { enabled: true }, actions: { enabled: true } },
+        transports: { rest: { enabled: true, base: "/ai2w" }, mcp: { enabled: true, endpoint: "/ai2w/mcp" }, acp: { enabled: true } },
+        auth: { methods: ["none", "oauth2"], oauth2: { pkce: true, scopes: ["checkout"] } },
+        consent: { requires_user_approval_for: ["purchase"] },
+        rate_limits: { default: "60/min" },
+        events: { endpoint: "/ai2w/events", types: ["order.shipped", "price.drop"] },
+        contact: { support: "help@store.example.com" },
+      }, null, 2);
+      runValidate();
+    }
+
+    $("urlForm").addEventListener("submit", (e) => { e.preventDefault(); checkUrl(); });
+    $("validateBtn").addEventListener("click", runValidate);
+    $("exampleBtn").addEventListener("click", loadExample);
+
+    // Auto-run when arrived from the header/hero scanner with ?url=
+    try {
+      const q = new URLSearchParams(location.search).get("url");
+      if (q) { ($("siteurl") as HTMLInputElement).value = q; checkUrl(); }
+    } catch {}
+  </script>
+</Base>

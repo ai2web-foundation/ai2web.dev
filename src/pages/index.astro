@@ -1,0 +1,146 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Protocols from "../components/Protocols.astro";
+import GetStarted from "../components/GetStarted.astro";
+import Faq from "../components/Faq.astro";
+
+const stats = [
+  { n: "5", l: "SDK languages" },
+  { n: "18", l: "open RFCs" },
+  { n: "/100", l: "readiness score" },
+  { n: "7+", l: "agent protocols" },
+];
+
+const values = [
+  {
+    n: "01",
+    t: "One capability model",
+    d: "Content, commerce, search, actions, support and more, declared once. Every agent reads the same contract, so you never rebuild per assistant.",
+  },
+  {
+    n: "02",
+    t: "Speaks every protocol",
+    d: "The same manifest projects to MCP, ACP, REST, GraphQL, OpenAPI and feeds. AI2Web negotiates which to use, so any protocol's success is a tailwind.",
+  },
+  {
+    n: "03",
+    t: "Discovery + validation",
+    d: "A required /.well-known/ai2w anchor makes sites findable, and the validator scores AI readiness out of 100 with per-capability checks.",
+  },
+  {
+    n: "04",
+    t: "Governance + safety",
+    d: "Consent, auth scopes, usage policy and audit are first-class. High-risk actions preview before they run, cross-origin credentials are refused by default.",
+  },
+];
+---
+
+<Base path="/">
+  <Hero />
+
+  <!-- Stat strip -->
+  <section class="section--tight strip">
+    <div class="wrap strip__in">
+      {stats.map((s, i) => (
+        <div class="strip__item reveal" data-d={String((i % 4) + 1)}>
+          <span class="strip__n mono">{s.n}</span>
+          <span class="strip__l dim">{s.l}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Positioning -->
+  <section class="section" id="what">
+    <div class="wrap pos">
+      <div class="pos__head">
+        <span class="eyebrow reveal" data-n="01">What it is</span>
+        <h2 class="h2 reveal" data-d="1">
+          Not "the MCP for websites".<br />
+          <span class="dim">The layer above the protocols.</span>
+        </h2>
+      </div>
+      <div class="pos__body reveal" data-d="2">
+        <p>
+          Agents shouldn't scrape HTML and guess at forms. AI2Web lets a site describe its
+          capabilities once, then be understood and used by any AI: what it is, what it offers,
+          what actions it supports, and how to do them safely.
+        </p>
+        <p class="dim">
+          Like a browser that speaks HTTP/1.1, HTTP/2, HTTP/3, WebSockets and WebRTC behind one
+          experience, AI2Web sits above the transports and adds the discovery, validation,
+          governance and analytics that individual protocol specs intentionally leave out.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value grid -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <span class="eyebrow reveal" data-n="02">How it works</span>
+      <h2 class="h2 reveal" data-d="1" style="margin-top:14px;max-width:20ch">
+        One description. Everything downstream.
+      </h2>
+      <div class="grid">
+        {values.map((v, i) => (
+          <article class="vcard card reveal" data-d={String((i % 4) + 1)}>
+            <span class="vcard__n mono">{v.n}</span>
+            <h3 class="vcard__t">{v.t}</h3>
+            <p class="vcard__d dim">{v.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Protocols />
+
+  <GetStarted />
+
+  <Faq />
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta card reveal">
+        <div class="cta__glow" aria-hidden="true"></div>
+        <span class="eyebrow" data-n="//">Get started</span>
+        <h2 class="h2" style="margin:12px 0 10px">Describe your site once.</h2>
+        <p class="dim" style="max-width:44ch;margin-bottom:26px">
+          Scan your site, read the docs, and add a single manifest. Free, open, MIT and CC-BY.
+        </p>
+        <div class="cta__row">
+          <a class="btn btn--primary" href="/validator">Scan your site</a>
+          <a class="btn btn--ghost" href="/docs">Read the docs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .strip { border-block: 1px solid var(--line); }
+    .strip__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .strip__item { display: grid; gap: 4px; }
+    .strip__n { font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 600; letter-spacing: -0.03em; }
+    .strip__l { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    @media (max-width: 620px) { .strip__in { grid-template-columns: 1fr 1fr; gap: 28px 24px; } }
+
+    .pos { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
+    .pos__body { display: grid; gap: 20px; font-size: clamp(1.05rem, 1.5vw, 1.24rem); line-height: 1.65; }
+    @media (max-width: 820px) { .pos { grid-template-columns: 1fr; gap: 24px; } }
+
+    .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .vcard { padding: clamp(22px, 3vw, 30px); display: grid; gap: 12px; align-content: start; transition: border-color .2s ease, transform .2s ease; }
+    .vcard:hover { border-color: var(--line-2); transform: translateY(-2px); }
+    .vcard__n { color: var(--accent); font-size: 0.82rem; letter-spacing: 0.1em; }
+    .vcard__t { font-size: 1.22rem; font-weight: 600; letter-spacing: -0.02em; }
+    .vcard__d { font-size: 0.96rem; line-height: 1.6; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+
+    .cta { position: relative; overflow: hidden; padding: clamp(34px, 6vw, 68px); text-align: center; display: grid; justify-items: center; }
+    .cta__glow { position: absolute; inset: auto 0 -60% 0; height: 300px; background: radial-gradient(50% 100% at 50% 100%, var(--accent-glow), transparent 70%); pointer-events: none; }
+    .cta__row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  </style>
+</Base>

@@ -1,0 +1,129 @@
+---
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+const {
+  title = "AI2Web - The interoperability layer for AI-enabled websites",
+  description = "Describe your website once. AI2Web makes it understandable and actionable to every AI agent, across MCP, ACP, REST, GraphQL and more, with discovery, validation and governance built in.",
+  path = "/",
+} = Astro.props;
+const canonical = new URL(path, "https://ai2web.dev").href;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#08090a" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://ai2web.dev/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://ai2web.dev/og-image.png" />
+
+    <link rel="icon" href="/logo-96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/logo-192.png" />
+    <link rel="ai2w" href="/ai2w" />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://ai2web.dev/#org",
+          name: "AI2Web Foundation",
+          url: "https://ai2web.dev/",
+          logo: "https://ai2web.dev/logo-512.png",
+          sameAs: ["https://github.com/ai2web-foundation"],
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://ai2web.dev/#site",
+          url: "https://ai2web.dev/",
+          name: "AI2Web",
+          publisher: { "@id": "https://ai2web.dev/#org" },
+        },
+        {
+          "@type": "SoftwareApplication",
+          name: "AI2Web",
+          applicationCategory: "DeveloperApplication",
+          operatingSystem: "Any",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          url: "https://ai2web.dev/",
+        },
+      ],
+    })} />
+
+    <script is:inline>
+      // Mark JS active (gates the reveal animation) and apply the saved theme before paint.
+      document.documentElement.classList.add("js");
+      (function () {
+        try {
+          var t = localStorage.getItem("ai2w-theme") || "dark";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Scroll reveal - a plain scroll/rAF check, not IntersectionObserver, so it works in every
+      // browser and can't leave content hidden. Above-the-fold elements reveal on load.
+      const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+      let ticking = false;
+      const check = () => {
+        ticking = false;
+        const h = window.innerHeight;
+        for (let i = els.length - 1; i >= 0; i--) {
+          if (els[i].getBoundingClientRect().top < h * 0.92) {
+            els[i].classList.add("in");
+            els.splice(i, 1);
+          }
+        }
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(check); } };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      // Run across several points so an early first paint (viewport not yet sized) still reveals
+      // above-the-fold content. A final safety net reveals anything still hidden after load.
+      check();
+      requestAnimationFrame(check);
+      window.addEventListener("load", () => { check(); setTimeout(check, 300); });
+
+      // Theme toggle
+      const setTheme = (t: string) => {
+        document.documentElement.setAttribute("data-theme", t);
+        try { localStorage.setItem("ai2w-theme", t); } catch {}
+      };
+      document.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const cur = document.documentElement.getAttribute("data-theme");
+          setTheme(cur === "dark" ? "light" : "dark");
+        });
+      });
+    </script>
+  </body>
+</html>

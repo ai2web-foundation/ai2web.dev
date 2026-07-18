@@ -1,0 +1,121 @@
+---
+// Hero: headline + prominent scanner + a live-looking manifest/readiness visual.
+---
+<section class="hero">
+  <div class="wrap hero__in">
+    <div class="hero__copy">
+      <span class="eyebrow reveal" data-n="//">Interoperability layer for AI-enabled websites</span>
+      <h1 class="display reveal" data-d="1">
+        Make your website work<br />
+        with <span class="grad">every AI</span>.<br />
+        <span class="dim">From one description.</span>
+      </h1>
+      <p class="lede reveal" data-d="2">
+        Describe your site once in a single capability manifest at <code class="tick">/ai2w</code>.
+        AI2Web speaks whichever protocol an assistant understands, so agents can read it and
+        act on it safely, without scraping HTML.
+      </p>
+
+      <form class="hscan reveal" data-d="3" data-scan action="/validator" method="get">
+        <div class="hscan__field">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input class="mono" type="text" name="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="yourstore.com" aria-label="Site URL to scan" />
+        </div>
+        <button class="btn btn--primary" type="submit">Scan readiness</button>
+      </form>
+      <p class="hscan__hint reveal" data-d="4">
+        Instant AI Readiness score out of 100 · no signup ·
+        <a href="/docs">read the docs &rarr;</a>
+      </p>
+    </div>
+
+    <div class="hero__vis reveal" data-d="2" aria-hidden="true">
+      <div class="panel card">
+        <div class="panel__bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="panel__url mono">GET /ai2w</span>
+        </div>
+        <pre class="panel__code mono"><code><span class="c-p">"protocol"</span>: <span class="c-s">"ai2w"</span>, <span class="c-p">"version"</span>: <span class="c-s">"0.2"</span>,
+<span class="c-p">"site"</span>: {'{'} <span class="c-p">"name"</span>: <span class="c-s">"Northwind"</span>, <span class="c-p">"type"</span>: <span class="c-s">"ecommerce"</span> {'}'},
+<span class="c-p">"capabilities"</span>: {'{'}
+  <span class="c-p">"content"</span>: <span class="c-k">true</span>, <span class="c-p">"commerce"</span>: {'{'} <span class="c-p">"checkout"</span>: <span class="c-k">true</span> {'}'},
+  <span class="c-p">"search"</span>: <span class="c-k">true</span>, <span class="c-p">"events"</span>: <span class="c-k">true</span>, <span class="c-p">"actions"</span>: <span class="c-k">true</span>
+{'}'},
+<span class="c-p">"transports"</span>: {'{'} <span class="c-p">"mcp"</span>, <span class="c-p">"rest"</span>, <span class="c-p">"acp"</span> {'}'},
+<span class="c-p">"auth"</span>: {'{'} <span class="c-p">"oauth2"</span>: {'{'} <span class="c-p">"pkce"</span>: <span class="c-k">true</span> {'}'} {'}'},
+<span class="c-p">"consent"</span>: {'{'} <span class="c-p">"requires_user_approval_for"</span>: [<span class="c-s">"purchase"</span>] {'}'},
+<span class="c-p">"agent_service"</span>: {'{'} <span class="c-p">"enabled"</span>: <span class="c-k">true</span> {'}'},
+<span class="c-p">"identity"</span>: {'{'} … {'}'}, <span class="c-p">"contact"</span>: {'{'} … {'}'}, <span class="c-p">"rate_limits"</span>: {'{'} … {'}'}</code></pre>
+        <div class="panel__foot">
+          <div class="score">
+            <svg class="score__ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="score__track"/><circle cx="22" cy="22" r="19" class="score__val"/></svg>
+            <span class="score__n mono">100</span>
+          </div>
+          <div class="score__meta">
+            <strong>AI Readiness 100/100</strong>
+            <span class="dim mono">Tier · Enterprise</span>
+          </div>
+          <span class="chk">✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; z-index: 1; padding-top: clamp(48px, 9vw, 104px); padding-bottom: clamp(40px, 7vw, 80px); }
+  .hero__in { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+
+  .grad {
+    background: linear-gradient(100deg, var(--accent-bright), var(--accent) 55%, var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tick, code.tick { font-family: var(--mono); font-size: 0.85em; color: var(--accent-bright); background: var(--accent-glow); padding: 0.1em 0.4em; border-radius: 5px; }
+  .lede { margin-top: 24px; }
+
+  .hscan { display: flex; gap: 10px; margin-top: 30px; max-width: 480px; }
+  .hscan__field {
+    flex: 1 1 auto; display: flex; align-items: center; gap: 10px; min-width: 0;
+    background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--r-sm);
+    padding: 0 14px; transition: border-color .16s ease, box-shadow .16s ease;
+  }
+  .hscan__field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .hscan__field svg { width: 17px; height: 17px; color: var(--text-faint); flex: 0 0 auto; }
+  .hscan__field input { flex: 1 1 auto; min-width: 0; background: none; border: 0; color: var(--text); font-size: 0.98rem; padding: 13px 0; }
+  .hscan__field input:focus { outline: none; }
+  .hscan__field input::placeholder { color: var(--text-faint); }
+  .hscan .btn { flex: 0 0 auto; }
+  .hscan__hint { margin-top: 14px; font-size: 0.86rem; color: var(--text-faint); }
+  .hscan__hint a { color: var(--text-dim); } .hscan__hint a:hover { color: var(--accent); }
+
+  /* Visual panel */
+  .hero__vis { perspective: 1400px; }
+  .panel { overflow: hidden; transform: rotateY(-4deg) rotateX(2deg); transition: transform .5s ease; }
+  .hero__vis:hover .panel { transform: none; }
+  .panel__bar { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line-2); }
+  .panel__url { margin-left: 10px; font-size: 0.76rem; color: var(--text-faint); }
+  .panel__code { margin: 0; padding: 16px 20px; font-size: 0.72rem; line-height: 1.6; color: var(--text-dim); overflow-x: auto; }
+  .c-p { color: var(--accent-bright); } .c-s { color: #e3b341; } .c-k { color: #79c0ff; }
+  .panel__foot { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-top: 1px solid var(--line); background: var(--surface); }
+  .score { position: relative; width: 44px; height: 44px; flex: 0 0 auto; }
+  .score__ring { width: 44px; height: 44px; transform: rotate(-90deg); }
+  .score__track { fill: none; stroke: var(--line); stroke-width: 4; }
+  .score__val { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 119.4; stroke-dashoffset: 0; animation: ring 1.4s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes ring { from { stroke-dashoffset: 119.4; } to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .score__val { animation: none; } }
+  .score__n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.82rem; font-weight: 600; }
+  .score__meta { display: grid; gap: 2px; margin-right: auto; }
+  .score__meta strong { font-size: 0.92rem; font-weight: 600; }
+  .score__meta span { font-size: 0.76rem; }
+  .chk { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-glow); color: var(--accent-bright); font-size: 0.9rem; }
+
+  @media (max-width: 900px) {
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__vis { max-width: 480px; }
+  }
+  @media (max-width: 520px) {
+    .hscan { flex-direction: column; }
+    .hscan .btn { width: 100%; justify-content: center; }
+  }
+</style>

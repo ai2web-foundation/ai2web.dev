@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Not found - AI2Web" path="/404" description="That page does not exist. Head back to AI2Web to describe your site once and make it work with every AI agent.">
+  <section class="nf">
+    <div class="wrap nf__in">
+      <span class="nf__code mono">404</span>
+      <h1 class="display nf__title">This page went off-manifest.</h1>
+      <p class="lede nf__lede">The page you are looking for does not exist. It may have moved, or never did.</p>
+      <div class="nf__row">
+        <a class="btn btn--primary" href="/">Back home</a>
+        <a class="btn btn--ghost" href="/docs">Read the docs</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .nf { min-height: 62vh; display: grid; place-items: center; text-align: center; }
+    .nf__in { display: grid; justify-items: center; gap: 6px; }
+    .nf__code { font-size: clamp(3rem, 10vw, 6rem); font-weight: 700; letter-spacing: -0.04em; color: transparent; background: linear-gradient(180deg, var(--accent-bright), var(--accent-deep)); -webkit-background-clip: text; background-clip: text; line-height: 1; }
+    .nf__title { font-size: clamp(1.6rem, 4vw, 2.6rem); margin-top: 8px; }
+    .nf__lede { margin: 14px 0 26px; max-width: 42ch; }
+    .nf__row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  </style>
+</Base>

@@ -1,0 +1,141 @@
+---
+import { Code } from "astro:components";
+import type { Tab } from "../data/examples";
+
+interface Props {
+  tabs: Tab[];
+  group?: string;
+}
+const { tabs, group = "code" } = Astro.props;
+const uid = `ct-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="ctabs card" data-ctabs>
+  <div class="ctabs__bar" role="tablist" aria-label="Language">
+    {tabs.map((t, i) => (
+      <button
+        class="ctabs__tab"
+        role="tab"
+        type="button"
+        id={`${uid}-t${i}`}
+        aria-selected={i === 0 ? "true" : "false"}
+        aria-controls={`${uid}-p${i}`}
+        data-lang-group={group}
+        data-lang={t.label}
+        tabindex={i === 0 ? "0" : "-1"}
+      >{t.label}</button>
+    ))}
+    <button class="ctabs__copy" type="button" data-copy aria-label="Copy code">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span class="ctabs__copy-t">Copy</span>
+    </button>
+  </div>
+  {tabs.map((t, i) => (
+    <div
+      class="ctabs__panel"
+      role="tabpanel"
+      id={`${uid}-p${i}`}
+      aria-labelledby={`${uid}-t${i}`}
+      data-code={t.code}
+      hidden={i !== 0}
+    >
+      <Code code={t.code} lang={t.lang as any} theme="github-dark" />
+    </div>
+  ))}
+</div>
+
+<style>
+  .ctabs { overflow: hidden; }
+  .ctabs__bar {
+    display: flex; align-items: center; gap: 2px;
+    padding: 6px 6px 6px 8px; border-bottom: 1px solid var(--line);
+    background: var(--surface); overflow-x: auto; scrollbar-width: none;
+  }
+  .ctabs__bar::-webkit-scrollbar { display: none; }
+  .ctabs__tab {
+    flex: 0 0 auto; font: inherit; font-size: 0.82rem; font-family: var(--mono);
+    color: var(--text-faint); background: none; border: 0; cursor: pointer;
+    padding: 6px 12px; border-radius: 7px; white-space: nowrap;
+    transition: color .14s ease, background .14s ease;
+  }
+  .ctabs__tab:hover { color: var(--text-dim); }
+  .ctabs__tab[aria-selected="true"] { color: var(--accent-bright); background: var(--accent-glow); }
+  .ctabs__copy {
+    margin-left: auto; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-size: 0.78rem; color: var(--text-faint);
+    background: none; border: 1px solid var(--line); border-radius: 7px;
+    padding: 5px 10px; cursor: pointer; transition: color .14s ease, border-color .14s ease;
+  }
+  .ctabs__copy:hover { color: var(--text); border-color: var(--line-2); }
+  .ctabs__copy[data-done] { color: var(--accent-bright); border-color: var(--accent); }
+
+  .ctabs__panel { margin: 0; }
+  .ctabs__panel :global(pre) {
+    margin: 0; padding: 20px 22px; background: transparent !important;
+    font-size: 0.83rem; line-height: 1.65; overflow-x: auto;
+    font-family: var(--mono);
+  }
+  .ctabs__panel :global(code) { font-family: var(--mono); }
+
+  @media (max-width: 520px) {
+    .ctabs__copy-t { display: none; }
+    .ctabs__panel :global(pre) { font-size: 0.78rem; padding: 16px; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-ctabs]").forEach((box) => {
+    const tabs = Array.from(box.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(box.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+    const select = (i: number, focus = true) => {
+      tabs.forEach((t, j) => {
+        const on = j === i;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        panels[j].hidden = !on;
+      });
+      if (focus) tabs[i].focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => {
+        select(i, false);
+        // Sync every code block on the page to the same language for a cohesive read.
+        const lang = tab.dataset.lang;
+        const grp = tab.dataset.langGroup;
+        if (lang && grp) {
+          document.querySelectorAll<HTMLButtonElement>(
+            `[role="tab"][data-lang-group="${grp}"][data-lang="${CSS.escape(lang)}"]`
+          ).forEach((t) => {
+            if (t !== tab) {
+              const parent = t.closest("[data-ctabs]");
+              const sib = Array.from(parent!.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+              const idx = sib.indexOf(t);
+              const ev = parent!.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+              sib.forEach((s, k) => { s.setAttribute("aria-selected", String(k === idx)); s.tabIndex = k === idx ? 0 : -1; ev[k].hidden = k !== idx; });
+            }
+          });
+        }
+      });
+      tab.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") { e.preventDefault(); select((i + 1) % tabs.length); }
+        else if (e.key === "ArrowLeft") { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length); }
+      });
+    });
+
+    const copyBtn = box.querySelector<HTMLButtonElement>("[data-copy]");
+    copyBtn?.addEventListener("click", async () => {
+      const active = panels.find((p) => !p.hidden);
+      const code = active?.dataset.code ?? "";
+      try {
+        await navigator.clipboard.writeText(code);
+        copyBtn.setAttribute("data-done", "");
+        const t = copyBtn.querySelector(".ctabs__copy-t");
+        const prev = t?.textContent;
+        if (t) t.textContent = "Copied";
+        setTimeout(() => { copyBtn.removeAttribute("data-done"); if (t && prev) t.textContent = prev; }, 1400);
+      } catch {}
+    });
+  });
+</script>
