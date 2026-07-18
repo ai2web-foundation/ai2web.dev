@@ -38,6 +38,17 @@ import Base from "../layouts/Base.astro";
           </div>
         </div>
         <ul class="checks" id="checks"></ul>
+
+        <!-- Discovery Network funnel: only after a live URL scan. The backend re-fetches
+             and verifies the manifest; nothing typed here is trusted. -->
+        <div class="join" id="join" hidden>
+          <div class="join__text">
+            <strong>List this site in the Discovery Network</strong>
+            <span class="dim">Agents find it through the AI2Web connector. We re-fetch and verify your live <code class="tick">/ai2w</code> - submitted data is ignored.</span>
+          </div>
+          <button class="btn btn--primary btn--sm" type="button" id="joinBtn">Add to directory</button>
+        </div>
+        <p class="join__msg mono" id="joinMsg" hidden></p>
       </div>
 
       <!-- Paste -->
@@ -99,11 +110,23 @@ import Base from "../layouts/Base.astro";
     #input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
     .paste__row { display: flex; align-items: center; gap: 14px; }
 
-    @media (max-width: 520px) { .vscan { flex-direction: column; } .vscan .btn { width: 100%; justify-content: center; } }
+    .join { display: flex; align-items: center; gap: 16px; margin-top: 18px; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); }
+    .join[hidden] { display: none; }
+    .join__text { display: grid; gap: 3px; margin-right: auto; }
+    .join__text strong { font-size: 0.95rem; }
+    .join__text span { font-size: 0.84rem; line-height: 1.5; }
+    .join__msg { margin-top: 10px; font-size: 0.84rem; }
+    .join__msg[hidden] { display: none; }
+    .join__msg.ok { color: var(--accent-bright); }
+    .join__msg.err { color: var(--warn); }
+
+    @media (max-width: 520px) { .vscan { flex-direction: column; } .vscan .btn { width: 100%; justify-content: center; } .join { flex-direction: column; align-items: stretch; } }
   </style>
 
   <script>
     const API = "https://validator.ai2web.dev";
+    const DIRECTORY = "https://directory.ai2web.dev";
+    let scannedUrl = "";
     const $ = (id: string) => document.getElementById(id)!;
     const esc = (s: unknown) =>
       String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -161,6 +184,7 @@ import Base from "../layouts/Base.astro";
             ? `<li class="ok"><span class="sym">✓</span> ${esc(c.label)}</li>`
             : `<li class="warn"><span class="sym">⚠</span> ${esc(c.label)}${c.hint ? ` <span class="hint">- ${esc(c.hint)}</span>` : ""}</li>`
         ).join("");
+      $("join").hidden = true; ($("joinMsg") as HTMLElement).hidden = true; // reset; checkUrl re-shows on a live scan
       $("result").scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
@@ -187,6 +211,9 @@ import Base from "../layouts/Base.astro";
         if (d.error) { hint.textContent = d.error; return; }
         if (d.found === false) { renderNotFound(val); return; }
         renderResult(d, d.source);
+        // Offer to list a live, AI-ready site in the Discovery Network.
+        scannedUrl = val;
+        $("join").hidden = false;
       } catch {
         hint.textContent = "could not reach the validator, try again";
       } finally {
@@ -220,9 +247,40 @@ import Base from "../layouts/Base.astro";
       runValidate();
     }
 
+    // Submit the scanned URL to the directory. The backend re-fetches and verifies
+    // the live manifest server-side; the browser only sends the URL.
+    async function joinDirectory() {
+      if (!scannedUrl) return;
+      const btn = $("joinBtn") as HTMLButtonElement, msg = $("joinMsg") as HTMLElement;
+      btn.disabled = true; btn.textContent = "Verifying...";
+      msg.hidden = true; msg.className = "join__msg mono";
+      try {
+        const res = await fetch(DIRECTORY + "/register", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ url: scannedUrl }),
+        });
+        const d = await res.json();
+        msg.hidden = false;
+        if (res.ok) {
+          msg.classList.add("ok");
+          msg.textContent = "✓ Verified and listed in the Discovery Network.";
+          btn.textContent = "Listed ✓";
+        } else {
+          msg.classList.add("err");
+          msg.textContent = "⚠ " + (d?.error?.message || "could not verify this site");
+          btn.textContent = "Add to directory"; btn.disabled = false;
+        }
+      } catch {
+        msg.hidden = false; msg.classList.add("err");
+        msg.textContent = "⚠ could not reach the directory, try again";
+        btn.textContent = "Add to directory"; btn.disabled = false;
+      }
+    }
+
     $("urlForm").addEventListener("submit", (e) => { e.preventDefault(); checkUrl(); });
     $("validateBtn").addEventListener("click", runValidate);
     $("exampleBtn").addEventListener("click", loadExample);
+    $("joinBtn").addEventListener("click", joinDirectory);
 
     // Auto-run when arrived from the header/hero scanner with ?url=
     try {
