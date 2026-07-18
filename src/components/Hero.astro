@@ -97,7 +97,8 @@
   .hscan__hint a { color: var(--text-dim); } .hscan__hint a:hover { color: var(--accent); }
 
   /* Visual panel */
-  .hero__vis { perspective: 1400px; }
+  .hero__vis { perspective: 1400px; min-width: 0; }
+  .panel { min-width: 0; }
   .panel { overflow: hidden; transform: rotateY(-4deg) rotateX(2deg); transition: transform .5s ease; }
   .hero__vis:hover .panel { transform: none; }
   .panel__bar { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid var(--line); background: var(--surface); }

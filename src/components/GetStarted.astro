@@ -59,9 +59,11 @@ import { CHROME_EXT, CHANNELS } from "../data/site";
     .gs-ext__cta { position: relative; flex: 0 0 auto; }
 
     .gs-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .gs-card { padding: 16px 18px; display: grid; gap: 12px; align-content: start; transition: border-color .2s ease, transform .2s ease; }
+    .gs-card { min-width: 0; padding: 16px 18px; display: grid; gap: 12px; align-content: start; transition: border-color .2s ease, transform .2s ease; }
     .gs-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
-    .gs-card__head { display: flex; align-items: center; gap: 10px; }
+    .gs-card__head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .gs-card__name { min-width: 0; }
+    .gs-card__pkg { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
     .gs-badge {
       flex: 0 0 auto; display: grid; place-items: center; min-width: 34px; height: 26px; padding: 0 7px;
       border-radius: 7px; font-size: 0.72rem; font-weight: 600; letter-spacing: -0.01em;
@@ -79,13 +81,13 @@ import { CHROME_EXT, CHANNELS } from "../data/site";
     .gs-card__head:hover .gs-card__arrow { color: var(--accent); }
 
     .gs-cmd {
-      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; text-align: left;
       background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm);
       padding: 9px 12px; cursor: pointer; color: var(--text-dim);
       transition: border-color .15s ease, color .15s ease;
     }
     .gs-cmd:hover { border-color: var(--line-2); color: var(--text); }
-    .gs-cmd code { flex: 1 1 auto; font-size: 0.76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gs-cmd code { flex: 1 1 auto; min-width: 0; font-size: 0.76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .gs-cmd__i { flex: 0 0 auto; color: var(--text-faint); }
     .gs-cmd[data-done] { border-color: var(--accent); color: var(--accent-bright); }
     .gs-cmd[data-done] .gs-cmd__i { color: var(--accent-bright); }
