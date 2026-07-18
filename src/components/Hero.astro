@@ -46,6 +46,13 @@
 <span class="c-p">"consent"</span>: {'{'} <span class="c-p">"requires_user_approval_for"</span>: [<span class="c-s">"purchase"</span>] {'}'},
 <span class="c-p">"agent_service"</span>: {'{'} <span class="c-p">"enabled"</span>: <span class="c-k">true</span> {'}'},
 <span class="c-p">"identity"</span>: {'{'} … {'}'}, <span class="c-p">"contact"</span>: {'{'} … {'}'}, <span class="c-p">"rate_limits"</span>: {'{'} … {'}'}</code></pre>
+        <div class="panel__scan mono">
+          <span class="sl" style="--i:0"><span class="tk">✓</span> Discovery manifest valid</span>
+          <span class="sl" style="--i:1"><span class="tk">✓</span> MCP transport detected</span>
+          <span class="sl" style="--i:2"><span class="tk">✓</span> ACP checkout detected</span>
+          <span class="sl" style="--i:3"><span class="tk">✓</span> Agent-to-Agent (A2A) ready</span>
+          <span class="sl" style="--i:4"><span class="tk">✓</span> OAuth2 + PKCE · consent gated</span>
+        </div>
         <div class="panel__foot">
           <div class="score">
             <svg class="score__ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="score__track"/><circle cx="22" cy="22" r="19" class="score__val"/></svg>
@@ -102,14 +109,54 @@
   .score { position: relative; width: 44px; height: 44px; flex: 0 0 auto; }
   .score__ring { width: 44px; height: 44px; transform: rotate(-90deg); }
   .score__track { fill: none; stroke: var(--line); stroke-width: 4; }
-  .score__val { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 119.4; stroke-dashoffset: 0; animation: ring 1.4s cubic-bezier(.2,.7,.2,1) both; }
+  .score__val { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 119.4; stroke-dashoffset: 0; }
   @keyframes ring { from { stroke-dashoffset: 119.4; } to { stroke-dashoffset: 0; } }
-  @media (prefers-reduced-motion: reduce) { .score__val { animation: none; } }
   .score__n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.82rem; font-weight: 600; }
   .score__meta { display: grid; gap: 2px; margin-right: auto; }
   .score__meta strong { font-size: 0.92rem; font-weight: 600; }
   .score__meta span { font-size: 0.76rem; }
   .chk { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-glow); color: var(--accent-bright); font-size: 0.9rem; }
+
+  /* Streaming "readiness scan" under the code sample */
+  .panel__scan {
+    display: grid; gap: 7px; margin: 0;
+    padding: 13px 20px; border-top: 1px solid var(--line); background: var(--surface);
+    font-size: 0.72rem; line-height: 1.2; color: var(--text-dim);
+  }
+  .sl { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .sl .tk {
+    display: inline-grid; place-items: center; flex: 0 0 auto;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent-glow); color: var(--accent-bright);
+    font-size: 0.6rem; font-weight: 700;
+  }
+
+  /* Stream the lines in one at a time, then reveal the score as the finale. Gated on `html.js`
+     + the panel scrolling into view (.in), so the resting state stays fully visible if JS is off. */
+  html.js .hero__vis .sl { opacity: 0; transform: translateY(3px); }
+  html.js .hero__vis.in .sl {
+    animation: sl-in .4s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: calc(0.15s + var(--i) * 0.42s);
+  }
+  html.js .hero__vis.in .sl .tk {
+    animation: tk-pop .4s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: calc(0.15s + var(--i) * 0.42s);
+  }
+  @keyframes sl-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+  @keyframes tk-pop { 0% { transform: scale(.2); opacity: 0; } 60% { transform: scale(1.18); } 100% { transform: scale(1); opacity: 1; } }
+
+  /* Finale: score ring fills and the tier badge fades in after the last line (~5 × 0.42s). */
+  html.js .hero__vis .panel__foot { opacity: 0; }
+  html.js .hero__vis.in .panel__foot { animation: sl-in .5s ease both; animation-delay: 2.15s; }
+  html.js .hero__vis .score__val { stroke-dashoffset: 119.4; }
+  html.js .hero__vis.in .score__val { animation: ring 1.3s cubic-bezier(.2,.7,.2,1) 2.25s forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js .hero__vis .sl,
+    html.js .hero__vis .sl .tk,
+    html.js .hero__vis .panel__foot { opacity: 1; transform: none; animation: none; }
+    html.js .hero__vis .score__val { stroke-dashoffset: 0; animation: none; }
+  }
 
   @media (max-width: 900px) {
     .hero__in { grid-template-columns: 1fr; }
