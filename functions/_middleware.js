@@ -26,7 +26,7 @@ function json(body, status = 200, extra = {}) {
 function manifest(origin) {
   return {
     protocol: "ai2w",
-    version: "0.1",
+    version: "0.2",
     site: {
       name: "AI2Web",
       url: origin,
@@ -37,7 +37,6 @@ function manifest(origin) {
     identity: {
       legal_name: "AI2Web Foundation",
       privacy_policy: origin + "/privacy",
-      terms: origin + "/",
     },
     capabilities: {
       content: { enabled: true, endpoint: "/ai2w/content" },
@@ -49,6 +48,8 @@ function manifest(origin) {
       feeds: { sitemap: "/sitemap.xml", llms: "/llms.txt" },
     },
     auth: { methods: ["none"] },
+    // Public read-only endpoints; declared so agents self-throttle. Enforced at the Cloudflare edge.
+    rate_limits: { anonymous: { requests: 120, window: "1m" } },
     contact: { support: "hello@ai2web.dev" },
   };
 }
@@ -191,7 +192,7 @@ async function handleMcp(request, origin) {
     return result({
       protocolVersion: "2024-11-05",
       capabilities: { tools: { listChanged: false } },
-      serverInfo: { name: "ai2w:AI2Web", version: "0.1" },
+      serverInfo: { name: "ai2w:AI2Web", version: "0.2" },
     });
   }
   if (method === "ping") return result({});

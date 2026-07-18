@@ -13,6 +13,8 @@ const toc = [
   { id: "actions", label: "Actions & approval" },
   { id: "transports", label: "Transports" },
   { id: "assistants", label: "Connect an assistant" },
+  { id: "network", label: "Discovery Network" },
+  { id: "connector", label: "Use the whole network" },
 ];
 
 const modules = [
@@ -167,6 +169,41 @@ POST /ai2w/negotiate     capability + transport negotiation` }]} />
           </div>
           <a class="btn btn--primary" href="/validator">Scan your site</a>
         </div>
+      </section>
+
+      <section id="network" class="ds">
+        <span class="eyebrow" data-n="10">Discovery Network</span>
+        <h2 class="ds__h">Get listed, verified</h2>
+        <p class="dim">
+          The Discovery Network (<code class="tick">directory.ai2web.dev</code>) lets agents find your
+          site without knowing its URL in advance. Every listing is <strong>verified server-side</strong>:
+          the directory re-fetches your live <code class="tick">/.well-known/ai2w</code>, validates it, and
+          requires the manifest's origin to match. Submitted data is never trusted, so the directory
+          cannot be spammed with sites that are not really AI-ready. A periodic health check re-verifies
+          each listing.
+        </p>
+        <p class="dim">Three ways to get listed:</p>
+        <CodeTabs group="reg" tabs={[
+          { label: "Validator", lang: "text", code: "Scan your site at ai2web.dev/validator, then click \"Add to directory\".\nThe backend verifies your live manifest before listing - one click, no account." },
+          { label: "SDK (auto)", lang: "typescript", code: "import { createAi2wHandler } from \"@ai2web/server\";\n\n// Announces this origin to the directory once, on its first discovery serve.\nexport default createAi2wHandler({ manifest, announce: true });" },
+          { label: "curl", lang: "bash", code: "curl -X POST https://directory.ai2web.dev/register \\\n  -H 'content-type: application/json' \\\n  -d '{\"url\": \"https://your-site.com\"}'" },
+        ]} />
+      </section>
+
+      <section id="connector" class="ds">
+        <span class="eyebrow" data-n="11">Use the whole network</span>
+        <h2 class="ds__h">One endpoint, every site</h2>
+        <p class="dim">
+          You do not have to add each site's MCP endpoint one by one. Add the single network connector -
+          <code class="tick">connector.ai2web.dev/mcp</code> - to your assistant and discover and use every
+          AI-ready site through it. It exposes <code class="tick">find_sites</code> (search the directory),{" "}
+          <code class="tick">describe_site</code> (read a site's capabilities and actions), and{" "}
+          <code class="tick">call_site_action</code> (invoke an action, approval-gated for high-risk).
+        </p>
+        <CodeTabs group="conn" tabs={[
+          { label: "Claude", lang: "bash", code: "# Add the network connector once - then find + use any AI-ready site.\nclaude mcp add ai2web --transport http https://connector.ai2web.dev/mcp\n\n# Or add https://connector.ai2web.dev/mcp as a custom connector in the Claude app." },
+          { label: "Any MCP client", lang: "text", code: "Point your MCP client at:  https://connector.ai2web.dev/mcp\n\nTools:\n  find_sites(capability?, type?, q?)   discover AI-ready sites\n  describe_site(url)                    read its capabilities + actions\n  call_site_action(url, action, input, confirm?)   invoke an action" },
+        ]} />
       </section>
     </article>
   </div>
