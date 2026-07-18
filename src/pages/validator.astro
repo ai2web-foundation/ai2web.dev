@@ -212,6 +212,7 @@ import Base from "../layouts/Base.astro";
         transports: { rest: { enabled: true, base: "/ai2w" }, mcp: { enabled: true, endpoint: "/ai2w/mcp" }, acp: { enabled: true } },
         auth: { methods: ["none", "oauth2"], oauth2: { pkce: true, scopes: ["checkout"] } },
         consent: { requires_user_approval_for: ["purchase"] },
+        agent_service: { enabled: true, endpoint: "/ai2w/agent" },
         rate_limits: { default: "60/min" },
         events: { endpoint: "/ai2w/events", types: ["order.shipped", "price.drop"] },
         contact: { support: "help@store.example.com" },
