@@ -1,5 +1,5 @@
 {
-  "name": "ai2web-web",
+  "name": "ai2web.dev",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/check-spacing.mjs",
+    "check": "node scripts/check-spacing.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
