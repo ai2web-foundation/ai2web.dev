@@ -4,7 +4,18 @@ export const SITE = {
   org: "ai2web-foundation",
   repo: "ai2web-foundation/ai2web-spec",
   ghUrl: "https://github.com/ai2web-foundation",
+  xUrl: "https://x.com/ai2webdev",
 };
+
+// "Featured on" launch badges shown in the footer. `upvotes` is edited by hand:
+// Product Hunt / Launchpadly / Peerlist do not expose a public, unauthenticated
+// vote-count endpoint (401 / Cloudflare challenge / client-rendered), so there is
+// no reliable way to pull them at build time. Bump these when they change.
+export const LAUNCHES = [
+  { key: "producthunt", name: "Product Hunt", href: "https://www.producthunt.com/products/ai2web", upvotes: 1 },
+  { key: "launchpadly", name: "Launchpadly", href: "https://launchpadly.co/startup/ai2web", upvotes: 5 },
+  { key: "peerlist", name: "Peerlist", href: "https://peerlist.io/rolandfarkas/project/ai2web", upvotes: 12 },
+];
 
 export const NAV = [
   { label: "Docs", href: "/docs" },
