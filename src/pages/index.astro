@@ -4,6 +4,7 @@ import Hero from "../components/Hero.astro";
 import Protocols from "../components/Protocols.astro";
 import GetStarted from "../components/GetStarted.astro";
 import Faq from "../components/Faq.astro";
+import { LAUNCHES } from "../data/site";
 
 const stats = [
   { n: "5", l: "SDK languages" },
@@ -116,6 +117,25 @@ const values = [
           <a class="btn btn--ghost" href="/docs">Read the docs</a>
         </div>
       </div>
+
+      <!-- Official launch badges (live upvote counts, rendered by each platform). -->
+      <div class="featured reveal">
+        <span class="featured__label mono">Featured on</span>
+        <div class="featured__badges">
+          {LAUNCHES.map((l) => (
+            <a class="featured__badge" href={l.href} target="_blank" rel="noopener" aria-label={l.name}>
+              <img
+                src={l.img}
+                alt={`${l.name} - AI2Web`}
+                height={l.h}
+                width={l.w || undefined}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -142,5 +162,12 @@ const values = [
     .cta { position: relative; overflow: hidden; padding: clamp(34px, 6vw, 68px); text-align: center; display: grid; justify-items: center; }
     .cta__glow { position: absolute; inset: auto 0 -60% 0; height: 300px; background: radial-gradient(50% 100% at 50% 100%, var(--accent-glow), transparent 70%); pointer-events: none; }
     .cta__row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    .featured { margin-top: 40px; display: grid; justify-items: center; gap: 16px; }
+    .featured__label { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+    .featured__badges { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: center; justify-content: center; }
+    .featured__badge { display: inline-flex; opacity: 0.92; transition: opacity .15s ease, transform .15s ease; }
+    .featured__badge:hover { opacity: 1; transform: translateY(-2px); }
+    .featured__badge img { display: block; height: 46px; width: auto; }
   </style>
 </Base>

@@ -7,14 +7,29 @@ export const SITE = {
   xUrl: "https://x.com/ai2webdev",
 };
 
-// "Featured on" launch badges shown in the footer. `upvotes` is edited by hand:
-// Product Hunt / Launchpadly / Peerlist do not expose a public, unauthenticated
-// vote-count endpoint (401 / Cloudflare challenge / client-rendered), so there is
-// no reliable way to pull them at build time. Bump these when they change.
+// "Featured on" launch badges. These are each platform's OFFICIAL embed SVG, so the
+// upvote counts are live (rendered server-side by the platform) - no build-time pull
+// needed. They load from external hosts (the one place the site makes third-party
+// requests) and carry each platform's own styling.
 export const LAUNCHES = [
-  { key: "producthunt", name: "Product Hunt", href: "https://www.producthunt.com/products/ai2web", upvotes: 1 },
-  { key: "launchpadly", name: "Launchpadly", href: "https://launchpadly.co/startup/ai2web", upvotes: 5 },
-  { key: "peerlist", name: "Peerlist", href: "https://peerlist.io/rolandfarkas/project/ai2web", upvotes: 12 },
+  {
+    name: "Product Hunt",
+    href: "https://www.producthunt.com/products/ai2web?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-ai2web",
+    img: "https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1193322&theme=dark",
+    w: 250, h: 54,
+  },
+  {
+    name: "Peerlist",
+    href: "https://peerlist.io/rolandfarkas/project/ai2web",
+    img: "https://peerlist.io/api/v1/projects/embed/PRJH7B87MEBAD67BP2699NRAB9MOR9?showUpvote=true&theme=dark",
+    w: 0, h: 54,
+  },
+  {
+    name: "Launchpadly",
+    href: "https://launchpadly.co/startup/ai2web?ref=badge",
+    img: "https://launchpadly.co/embed/badges/startup/ai2web.svg?variant=listed-on",
+    w: 260, h: 48,
+  },
 ];
 
 export const NAV = [
