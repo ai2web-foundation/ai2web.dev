@@ -21,9 +21,9 @@ import Base from "../layouts/Base.astro";
       </form>
       <div id="turnstile" style="margin-top:14px"></div>
       <p class="vscan__hint mono dim" id="uhint"></p>
-      <!-- data-cfasync="false" keeps Cloudflare Rocket Loader from re-executing the widget script
-           (which breaks Turnstile init: "already loaded" + render never attaches). -->
-      <script is:inline data-cfasync="false" src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      <!-- The Turnstile api.js is injected once from the page script (guarded), not via a static
+           tag - a static tag was being executed twice here ("already loaded" + render never
+           attaches), so a guarded single injection with render=explicit&onload avoids it. -->
     </div>
   </section>
 
@@ -324,15 +324,29 @@ import Base from "../layouts/Base.astro";
         turnstileToken = "";
       }
     }
-    function whenTurnstileReady(cb: () => void) {
-      // window.turnstile appears as an empty placeholder before `render` is attached, so wait for
-      // the method itself - not just the object - or we'd call render() too early and it would throw.
-      const ready = () => typeof (window as any).turnstile?.render === "function";
+    // Inject the Turnstile api.js exactly once (a static <script> was being executed twice on this
+    // page, so api.js hit its "already loaded" guard and never attached `render`). render=explicit +
+    // onload guarantees we only call render() once the method is actually ready. cb runs then.
+    function loadTurnstile(cb: () => void) {
+      const w = window as any;
+      const ready = () => typeof w.turnstile?.render === "function";
       if (ready()) return cb();
+      (w.__ai2wTsQueue = w.__ai2wTsQueue || []).push(cb);
+      w.__ai2wTsOnload = () => { (w.__ai2wTsQueue || []).splice(0).forEach((fn: () => void) => fn()); };
+      if (!w.__ai2wTsInjected) {
+        w.__ai2wTsInjected = true;
+        const s = document.createElement("script");
+        s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=__ai2wTsOnload&render=explicit";
+        s.async = true;
+        s.setAttribute("data-cfasync", "false");
+        s.onerror = () => console.error("[turnstile] api.js failed to load");
+        document.head.appendChild(s);
+      }
+      // Fallback in case onload never fires; the queue-splice makes cb run at most once.
       let n = 0;
       const t = setInterval(() => {
-        if (ready()) { clearInterval(t); cb(); }
-        else if (++n > 100) clearInterval(t); // give up after ~10s
+        if (ready()) { clearInterval(t); if (w.__ai2wTsQueue?.length) w.__ai2wTsOnload(); }
+        else if (++n > 100) clearInterval(t);
       }, 100);
     }
     function deepLinkUrl(): string | null {
@@ -357,7 +371,7 @@ import Base from "../layouts/Base.astro";
           (box as HTMLElement).style.fontSize = "0.85rem";
         }
       };
-      whenTurnstileReady(() => {
+      loadTurnstile(() => {
         try {
           turnstileWidgetId = (window as any).turnstile.render("#turnstile", {
             sitekey: siteKey,
