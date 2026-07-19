@@ -19,7 +19,9 @@ import Base from "../layouts/Base.astro";
         </div>
         <button class="btn btn--primary" type="submit" id="scanBtn">Scan</button>
       </form>
+      <div id="turnstile" style="margin-top:14px"></div>
       <p class="vscan__hint mono dim" id="uhint"></p>
+      <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     </div>
   </section>
 
@@ -127,6 +129,8 @@ import Base from "../layouts/Base.astro";
     const API = "https://validator.ai2web.dev";
     const DIRECTORY = "https://directory.ai2web.dev";
     let scannedUrl = "";
+    let turnstileToken = "", turnstileEnabled = false, pendingAutoScan = false;
+    let turnstileWidgetId: any = null;
     const $ = (id: string) => document.getElementById(id)!;
     const esc = (s: unknown) =>
       String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -208,13 +212,21 @@ import Base from "../layouts/Base.astro";
       let val = (input.value || "").trim();
       if (!val) { hint.textContent = "enter a URL"; return; }
       if (!/^https?:\/\//i.test(val)) val = "https://" + val;
+      if (turnstileEnabled && !turnstileToken) { hint.textContent = "please complete the verification below"; return; }
       hint.textContent = "scanning " + val + " ...";
       ($("scanBtn") as HTMLButtonElement).disabled = true;
       try {
-        const res = await fetch(API + "/validate?url=" + encodeURIComponent(val));
-        const d = await res.json();
+        // Gated by a Pages Function (Turnstile + per-IP rate limit) that proxies to the validator.
+        const res = await fetch("/api/validate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ url: val, token: turnstileToken }),
+        });
+        const d = await res.json().catch(() => ({}));
         hint.textContent = "";
-        if (d.error) { hint.textContent = d.error; return; }
+        if (res.status === 429) { hint.textContent = d.message || "too many scans, please wait a minute"; return; }
+        if (res.status === 403) { hint.textContent = d.message || "verification failed, please try again"; return; }
+        if (d.error) { hint.textContent = d.message || d.error; return; }
         if (d.found === false) { renderNotFound(val); return; }
         renderResult(d, d.source);
         // Offer to list a live, AI-ready site in the Discovery Network.
@@ -224,6 +236,7 @@ import Base from "../layouts/Base.astro";
         hint.textContent = "could not reach the validator, try again";
       } finally {
         ($("scanBtn") as HTMLButtonElement).disabled = false;
+        resetTurnstile(); // tokens are single-use; get a fresh one for the next scan
       }
     }
 
@@ -293,10 +306,50 @@ import Base from "../layouts/Base.astro";
     $("exampleBtn").addEventListener("click", loadExample);
     $("joinBtn").addEventListener("click", joinDirectory);
 
-    // Auto-run when arrived from the header/hero scanner with ?url=
-    try {
-      const q = new URLSearchParams(location.search).get("url");
-      if (q) { ($("siteurl") as HTMLInputElement).value = q; checkUrl(); }
-    } catch {}
+    // Cloudflare Turnstile: verify a human before each scan. The site key comes from /api/config
+    // (the SITE_KEY Pages env); tokens are single-use, so we reset the widget after every scan.
+    function resetTurnstile() {
+      if (turnstileEnabled && turnstileWidgetId !== null && (window as any).turnstile) {
+        (window as any).turnstile.reset(turnstileWidgetId);
+        turnstileToken = "";
+      }
+    }
+    function whenTurnstileReady(cb: () => void) {
+      if ((window as any).turnstile) return cb();
+      let n = 0;
+      const t = setInterval(() => {
+        if ((window as any).turnstile) { clearInterval(t); cb(); }
+        else if (++n > 80) clearInterval(t); // give up after ~8s
+      }, 100);
+    }
+    function deepLinkUrl(): string | null {
+      try {
+        const q = new URLSearchParams(location.search).get("url");
+        if (q) { ($("siteurl") as HTMLInputElement).value = q; return q; }
+      } catch {}
+      return null;
+    }
+    // Arrive from the header/hero scanner with ?url= : scan once we have a token (or immediately
+    // if Turnstile is not configured).
+    async function initTurnstile() {
+      let siteKey: string | null = null;
+      try { siteKey = (await (await fetch("/api/config")).json()).turnstileSiteKey; } catch {}
+      const deep = deepLinkUrl();
+      if (!siteKey) { if (deep) checkUrl(); return; }
+      whenTurnstileReady(() => {
+        try {
+          turnstileWidgetId = (window as any).turnstile.render("#turnstile", {
+            sitekey: siteKey,
+            theme: "auto",
+            callback: (tok: string) => { turnstileToken = tok; if (pendingAutoScan) { pendingAutoScan = false; checkUrl(); } },
+            "error-callback": () => { turnstileToken = ""; },
+            "expired-callback": () => { turnstileToken = ""; },
+          });
+          turnstileEnabled = true;
+          if (deep) pendingAutoScan = true;
+        } catch {}
+      });
+    }
+    initTurnstile();
   </script>
 </Base>
