@@ -372,14 +372,20 @@ import Base from "../layouts/Base.astro";
         }
       };
       loadTurnstile(() => {
+        const w = window as any;
+        // Render exactly once. If the callback fires more than once (or init runs twice), a second
+        // turnstile.render() on the same container throws "already rendered" - which must NOT wipe
+        // the widget that already mounted.
+        if (w.__ai2wTsRendered) { turnstileEnabled = true; if (deep) pendingAutoScan = true; return; }
         try {
-          turnstileWidgetId = (window as any).turnstile.render("#turnstile", {
+          turnstileWidgetId = w.turnstile.render("#turnstile", {
             sitekey: siteKey,
             theme: "auto",
             callback: (tok: string) => { turnstileToken = tok; if (pendingAutoScan) { pendingAutoScan = false; checkUrl(); } },
             "error-callback": (code: string) => { turnstileToken = ""; console.error("[turnstile] error", code); showLoadError(String(code || "error")); },
             "expired-callback": () => { turnstileToken = ""; },
           });
+          w.__ai2wTsRendered = true;
           turnstileEnabled = true;
           if (deep) pendingAutoScan = true;
         } catch (e) { console.error("[turnstile] render failed", e); showLoadError("render"); }
