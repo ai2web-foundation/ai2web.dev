@@ -323,11 +323,14 @@ import Base from "../layouts/Base.astro";
       }
     }
     function whenTurnstileReady(cb: () => void) {
-      if ((window as any).turnstile) return cb();
+      // window.turnstile appears as an empty placeholder before `render` is attached, so wait for
+      // the method itself - not just the object - or we'd call render() too early and it would throw.
+      const ready = () => typeof (window as any).turnstile?.render === "function";
+      if (ready()) return cb();
       let n = 0;
       const t = setInterval(() => {
-        if ((window as any).turnstile) { clearInterval(t); cb(); }
-        else if (++n > 80) clearInterval(t); // give up after ~8s
+        if (ready()) { clearInterval(t); cb(); }
+        else if (++n > 100) clearInterval(t); // give up after ~10s
       }, 100);
     }
     function deepLinkUrl(): string | null {
