@@ -1,0 +1,84 @@
+---
+// The agent-side story: one connector reaches the whole Discovery Network.
+const tools = [
+  { name: "find_sites", d: "discover AI-ready sites by capability or type" },
+  { name: "describe_site", d: "read a site's capabilities and actions" },
+  { name: "call_site_action", d: "invoke an action, approval-gated for high-risk" },
+];
+const ENDPOINT = "https://connector.ai2web.dev/mcp";
+---
+
+<section class="section" id="network">
+  <div class="wrap">
+    <span class="eyebrow reveal" data-n="//">For assistants</span>
+    <div class="nw-head">
+      <h2 class="h2 reveal" data-d="1">One connector.<br /><span class="dim">Every AI-ready site.</span></h2>
+      <p class="lede reveal" data-d="2">
+        Assistants don't add sites one at a time. Point yours at a single MCP endpoint and it can
+        discover and act on AI-ready sites across the network - no per-site setup, and no new format
+        for anyone to adopt.
+      </p>
+    </div>
+
+    <div class="nw-endpoint card reveal" data-d="2">
+      <span class="nw-endpoint__label mono">Add one endpoint to your assistant</span>
+      <button class="nw-endpoint__url mono" type="button" data-copy={ENDPOINT} aria-label="Copy the connector endpoint">
+        <span>{ENDPOINT}</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+    </div>
+
+    <div class="nw-tools reveal" data-d="3">
+      {tools.map((t) => (
+        <div class="nw-tool card">
+          <code class="nw-tool__name mono">{t.name}</code>
+          <span class="dim nw-tool__d">{t.d}</span>
+        </div>
+      ))}
+    </div>
+
+    <p class="nw-note dim reveal">
+      Works with Claude, ChatGPT (developer mode) and any MCP client. The network grows as sites
+      register, so a small, excellent site is reachable on merit - <a href="/validator">add yours</a>.
+    </p>
+  </div>
+
+  <style>
+    .nw-head { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(20px, 4vw, 60px); align-items: end; margin: 14px 0 32px; }
+    @media (max-width: 780px) { .nw-head { grid-template-columns: 1fr; gap: 16px; } }
+
+    .nw-endpoint { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 20px; }
+    .nw-endpoint__label { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+    .nw-endpoint__url {
+      display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%;
+      background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm);
+      padding: 9px 13px; color: var(--accent-bright); font-size: 0.9rem; cursor: pointer;
+      transition: border-color .15s ease;
+    }
+    .nw-endpoint__url span { overflow: hidden; text-overflow: ellipsis; }
+    .nw-endpoint__url svg { flex: 0 0 auto; color: var(--text-faint); }
+    .nw-endpoint__url:hover { border-color: var(--line-2); }
+    .nw-endpoint__url[data-done] { color: var(--accent); border-color: var(--accent); }
+
+    .nw-tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    .nw-tool { min-width: 0; padding: 16px 18px; display: grid; gap: 8px; align-content: start; }
+    .nw-tool__name { color: var(--accent-bright); font-size: 0.9rem; font-weight: 600; }
+    .nw-tool__d { font-size: 0.9rem; line-height: 1.5; }
+    @media (max-width: 720px) { .nw-tools { grid-template-columns: 1fr; } }
+
+    .nw-note { margin-top: 26px; font-size: 0.92rem; max-width: 66ch; }
+    .nw-note a { color: var(--accent); }
+  </style>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("#network [data-copy]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy ?? "");
+          btn.setAttribute("data-done", "");
+          setTimeout(() => btn.removeAttribute("data-done"), 1400);
+        } catch {}
+      });
+    });
+  </script>
+</section>
