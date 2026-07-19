@@ -195,6 +195,12 @@ import Base from "../layouts/Base.astro";
       $("tier").textContent = "No AI2Web manifest found";
       $("source").textContent = "";
       $("checks").innerHTML = `<li class="warn"><span class="sym">⚠</span> ${esc(url)} is not AI-ready yet. <span class="hint"><a href="/docs">How to add AI2Web &rarr;</a></span></li>`;
+      // A site with no manifest cannot be listed - clear any leftover funnel state from a prior
+      // successful scan so a stale "Listed ✓" never shows under a "not AI-ready" result.
+      scannedUrl = "";
+      $("join").hidden = true;
+      const jm = $("joinMsg") as HTMLElement; jm.hidden = true; jm.className = "join__msg mono";
+      const jb = $("joinBtn") as HTMLButtonElement; jb.textContent = "Add to directory"; jb.disabled = false;
     }
 
     async function checkUrl() {
