@@ -271,14 +271,20 @@ import Base from "../layouts/Base.astro";
     async function joinDirectory() {
       if (!scannedUrl) return;
       const btn = $("joinBtn") as HTMLButtonElement, msg = $("joinMsg") as HTMLElement;
+      if (turnstileEnabled && !turnstileToken) {
+        msg.hidden = false; msg.className = "join__msg mono err";
+        msg.textContent = "⚠ please complete the verification below, then try again";
+        return;
+      }
       btn.disabled = true; btn.textContent = "Verifying...";
       msg.hidden = true; msg.className = "join__msg mono";
       try {
-        const res = await fetch(DIRECTORY + "/register", {
+        // Same Turnstile + rate-limit gate as the scanner; proxies to the directory register.
+        const res = await fetch("/api/register", {
           method: "POST", headers: { "content-type": "application/json" },
-          body: JSON.stringify({ url: scannedUrl }),
+          body: JSON.stringify({ url: scannedUrl, token: turnstileToken }),
         });
-        const d = await res.json();
+        const d = await res.json().catch(() => ({}));
         msg.hidden = false;
         if (res.ok) {
           msg.classList.add("ok");
@@ -298,6 +304,8 @@ import Base from "../layouts/Base.astro";
         msg.hidden = false; msg.classList.add("err");
         msg.textContent = "⚠ could not reach the directory, try again";
         btn.textContent = "Add to directory"; btn.disabled = false;
+      } finally {
+        resetTurnstile(); // single-use token; refresh for the next action
       }
     }
 
