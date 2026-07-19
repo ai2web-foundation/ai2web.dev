@@ -61,8 +61,9 @@ export async function onRequestPost({ request, env }) {
     return gateError(429, "rate_limited", "Too many submissions. Please wait a minute and try again.", { "retry-after": String(RATE_WINDOW) });
   }
 
-  if (env.SECRET_KEY) {
-    if (!token) return gateError(403, "turnstile_required", "Please complete the verification challenge.");
+  // Verify Turnstile only if a token is present; a missing token falls through to the rate limit
+  // (the directory also does its own verification-first listing + rate limit downstream).
+  if (env.SECRET_KEY && token) {
     if (!(await turnstileOk(token, ip, env.SECRET_KEY))) {
       return gateError(403, "turnstile_failed", "Verification failed. Please try again.");
     }

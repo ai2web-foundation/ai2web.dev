@@ -21,9 +21,29 @@ import Base from "../layouts/Base.astro";
       </form>
       <div id="turnstile" style="margin-top:14px"></div>
       <p class="vscan__hint mono dim" id="uhint"></p>
-      <!-- The Turnstile api.js is injected once from the page script (guarded), not via a static
-           tag - a static tag was being executed twice here ("already loaded" + render never
-           attaches), so a guarded single injection with render=explicit&onload avoids it. -->
+      <!-- Canonical Cloudflare Turnstile: define the onload callback, then load api.js with
+           render=explicit so Cloudflare calls us back exactly when turnstile.render is ready. -->
+      <script is:inline>
+        window.__ai2wToken = "";
+        window.onAi2wTurnstile = function () {
+          if (window.__ai2wTsDone) return;
+          window.__ai2wTsDone = true;
+          fetch("/api/config")
+            .then(function (r) { return r.json(); })
+            .then(function (cfg) {
+              if (!cfg || !cfg.turnstileSiteKey || !window.turnstile) return;
+              window.turnstile.render("#turnstile", {
+                sitekey: cfg.turnstileSiteKey,
+                theme: "auto",
+                callback: function (t) { window.__ai2wToken = t; },
+                "expired-callback": function () { window.__ai2wToken = ""; },
+                "error-callback": function () { window.__ai2wToken = ""; },
+              });
+            })
+            .catch(function () {});
+        };
+      </script>
+      <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onAi2wTurnstile&render=explicit" async defer></script>
     </div>
   </section>
 
@@ -131,8 +151,13 @@ import Base from "../layouts/Base.astro";
     const API = "https://validator.ai2web.dev";
     const DIRECTORY = "https://directory.ai2web.dev";
     let scannedUrl = "";
-    let turnstileToken = "", turnstileEnabled = false, pendingAutoScan = false;
-    let turnstileWidgetId: any = null;
+    // Turnstile token + reset live on window (the widget is rendered by the inline script above).
+    const tsToken = (): string => (window as any).__ai2wToken || "";
+    function resetTurnstile() {
+      const w = window as any;
+      try { if (w.turnstile && w.__ai2wTsDone) w.turnstile.reset("#turnstile"); } catch {}
+      w.__ai2wToken = "";
+    }
     const $ = (id: string) => document.getElementById(id)!;
     const esc = (s: unknown) =>
       String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -214,7 +239,6 @@ import Base from "../layouts/Base.astro";
       let val = (input.value || "").trim();
       if (!val) { hint.textContent = "enter a URL"; return; }
       if (!/^https?:\/\//i.test(val)) val = "https://" + val;
-      if (turnstileEnabled && !turnstileToken) { hint.textContent = "please complete the verification below"; return; }
       hint.textContent = "scanning " + val + " ...";
       ($("scanBtn") as HTMLButtonElement).disabled = true;
       try {
@@ -222,7 +246,7 @@ import Base from "../layouts/Base.astro";
         const res = await fetch("/api/validate", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ url: val, token: turnstileToken }),
+          body: JSON.stringify({ url: val, token: tsToken() }),
         });
         const d = await res.json().catch(() => ({}));
         hint.textContent = "";
@@ -273,18 +297,13 @@ import Base from "../layouts/Base.astro";
     async function joinDirectory() {
       if (!scannedUrl) return;
       const btn = $("joinBtn") as HTMLButtonElement, msg = $("joinMsg") as HTMLElement;
-      if (turnstileEnabled && !turnstileToken) {
-        msg.hidden = false; msg.className = "join__msg mono err";
-        msg.textContent = "⚠ please complete the verification below, then try again";
-        return;
-      }
       btn.disabled = true; btn.textContent = "Verifying...";
       msg.hidden = true; msg.className = "join__msg mono";
       try {
         // Same Turnstile + rate-limit gate as the scanner; proxies to the directory register.
         const res = await fetch("/api/register", {
           method: "POST", headers: { "content-type": "application/json" },
-          body: JSON.stringify({ url: scannedUrl, token: turnstileToken }),
+          body: JSON.stringify({ url: scannedUrl, token: tsToken() }),
         });
         const d = await res.json().catch(() => ({}));
         msg.hidden = false;
@@ -316,88 +335,11 @@ import Base from "../layouts/Base.astro";
     $("exampleBtn").addEventListener("click", loadExample);
     $("joinBtn").addEventListener("click", joinDirectory);
 
-    // Cloudflare Turnstile: verify a human before each scan. The site key comes from /api/config
-    // (the SITE_KEY Pages env); tokens are single-use, so we reset the widget after every scan.
-    function resetTurnstile() {
-      if (turnstileEnabled && turnstileWidgetId !== null && (window as any).turnstile) {
-        (window as any).turnstile.reset(turnstileWidgetId);
-        turnstileToken = "";
-      }
-    }
-    // Inject the Turnstile api.js exactly once (a static <script> was being executed twice on this
-    // page, so api.js hit its "already loaded" guard and never attached `render`). render=explicit +
-    // onload guarantees we only call render() once the method is actually ready. cb runs then.
-    function loadTurnstile(cb: () => void) {
-      const w = window as any;
-      const ready = () => typeof w.turnstile?.render === "function";
-      if (ready()) return cb();
-      (w.__ai2wTsQueue = w.__ai2wTsQueue || []).push(cb);
-      w.__ai2wTsOnload = () => { (w.__ai2wTsQueue || []).splice(0).forEach((fn: () => void) => fn()); };
-      if (!w.__ai2wTsInjected) {
-        w.__ai2wTsInjected = true;
-        const s = document.createElement("script");
-        s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=__ai2wTsOnload&render=explicit";
-        s.async = true;
-        s.setAttribute("data-cfasync", "false");
-        s.onerror = () => console.error("[turnstile] api.js failed to load");
-        document.head.appendChild(s);
-      }
-      // Fallback in case onload never fires; the queue-splice makes cb run at most once.
-      let n = 0;
-      const t = setInterval(() => {
-        if (ready()) { clearInterval(t); if (w.__ai2wTsQueue?.length) w.__ai2wTsOnload(); }
-        else if (++n > 100) clearInterval(t);
-      }, 100);
-    }
-    function deepLinkUrl(): string | null {
-      try {
-        const q = new URLSearchParams(location.search).get("url");
-        if (q) { ($("siteurl") as HTMLInputElement).value = q; return q; }
-      } catch {}
-      return null;
-    }
-    // Arrive from the header/hero scanner with ?url= : scan once we have a token (or immediately
-    // if Turnstile is not configured).
-    async function initTurnstile() {
-      let siteKey: string | null = null;
-      try { siteKey = (await (await fetch("/api/config")).json()).turnstileSiteKey; } catch {}
-      const deep = deepLinkUrl();
-      if (!siteKey) { if (deep) checkUrl(); return; }
-      const box = $("turnstile");
-      const showLoadError = (why: string) => {
-        if (box && !box.querySelector("iframe")) {
-          box.textContent = "⚠ verification could not load (" + why + ")";
-          (box as HTMLElement).style.color = "var(--warn, #d29922)";
-          (box as HTMLElement).style.fontSize = "0.85rem";
-        }
-      };
-      loadTurnstile(() => {
-        const w = window as any;
-        // Render exactly once. If the callback fires more than once (or init runs twice), a second
-        // turnstile.render() on the same container throws "already rendered" - which must NOT wipe
-        // the widget that already mounted.
-        if (w.__ai2wTsRendered) { turnstileEnabled = true; if (deep) pendingAutoScan = true; return; }
-        try {
-          turnstileWidgetId = w.turnstile.render("#turnstile", {
-            sitekey: siteKey,
-            theme: "auto",
-            callback: (tok: string) => { turnstileToken = tok; if (pendingAutoScan) { pendingAutoScan = false; checkUrl(); } },
-            "error-callback": (code: string) => { turnstileToken = ""; console.error("[turnstile] error", code); showLoadError(String(code || "error")); },
-            "expired-callback": () => { turnstileToken = ""; },
-          });
-          w.__ai2wTsRendered = true;
-          turnstileEnabled = true;
-          if (deep) pendingAutoScan = true;
-        } catch (e) { console.error("[turnstile] render failed", e); showLoadError("render"); }
-      });
-      // Surface a silent failure (widget never mounted) instead of leaving the user deadlocked.
-      setTimeout(() => {
-        if (box && !box.querySelector("iframe") && !turnstileToken) {
-          console.warn("[turnstile] widget did not mount within 9s - check Rocket Loader / domain allowlist / blockers");
-          showLoadError("did not load");
-        }
-      }, 9000);
-    }
-    initTurnstile();
+    // Arrive from the header/hero scanner with ?url= : run the scan on load. The scan sends the
+    // Turnstile token if the widget produced one; the backend verifies it when present.
+    try {
+      const q = new URLSearchParams(location.search).get("url");
+      if (q) { ($("siteurl") as HTMLInputElement).value = q; checkUrl(); }
+    } catch {}
   </script>
 </Base>

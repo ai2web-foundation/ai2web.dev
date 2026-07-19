@@ -62,9 +62,10 @@ export async function onRequestPost({ request, env }) {
     return json(429, { error: "rate_limited", message: "Too many scans. Please wait a minute and try again." }, { "retry-after": String(RATE_WINDOW) });
   }
 
-  // Turnstile is enforced whenever the secret is configured (it is, in production).
-  if (env.SECRET_KEY) {
-    if (!token) return json(403, { error: "turnstile_required", message: "Please complete the verification challenge." });
+  // Verify Turnstile only if a token is present. A MISSING token is not hard-blocked - the widget
+  // can fail to load in some browsers, and the per-IP rate limit above is the always-on protection.
+  // A present-but-invalid token is still rejected.
+  if (env.SECRET_KEY && token) {
     if (!(await turnstileOk(token, ip, env.SECRET_KEY))) {
       return json(403, { error: "turnstile_failed", message: "Verification failed. Please try again." });
     }
