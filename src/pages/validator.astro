@@ -267,7 +267,12 @@ import Base from "../layouts/Base.astro";
           btn.textContent = "Listed ✓";
         } else {
           msg.classList.add("err");
-          msg.textContent = "⚠ " + (d?.error?.message || "could not verify this site");
+          const e = d?.error;
+          const reason = e?.message
+            || (e?.code === "auth_required" ? "the directory is not open for public submissions yet"
+              : e?.code ? e.code.replace(/_/g, " ")
+              : "could not verify this site");
+          msg.textContent = "⚠ " + reason;
           btn.textContent = "Add to directory"; btn.disabled = false;
         }
       } catch {
