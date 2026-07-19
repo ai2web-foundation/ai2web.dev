@@ -21,7 +21,9 @@ import Base from "../layouts/Base.astro";
       </form>
       <div id="turnstile" style="margin-top:14px"></div>
       <p class="vscan__hint mono dim" id="uhint"></p>
-      <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      <!-- data-cfasync="false" keeps Cloudflare Rocket Loader from re-executing the widget script
+           (which breaks Turnstile init: "already loaded" + render never attaches). -->
+      <script is:inline data-cfasync="false" src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     </div>
   </section>
 
@@ -347,19 +349,34 @@ import Base from "../layouts/Base.astro";
       try { siteKey = (await (await fetch("/api/config")).json()).turnstileSiteKey; } catch {}
       const deep = deepLinkUrl();
       if (!siteKey) { if (deep) checkUrl(); return; }
+      const box = $("turnstile");
+      const showLoadError = (why: string) => {
+        if (box && !box.querySelector("iframe")) {
+          box.textContent = "⚠ verification could not load (" + why + ")";
+          (box as HTMLElement).style.color = "var(--warn, #d29922)";
+          (box as HTMLElement).style.fontSize = "0.85rem";
+        }
+      };
       whenTurnstileReady(() => {
         try {
           turnstileWidgetId = (window as any).turnstile.render("#turnstile", {
             sitekey: siteKey,
             theme: "auto",
             callback: (tok: string) => { turnstileToken = tok; if (pendingAutoScan) { pendingAutoScan = false; checkUrl(); } },
-            "error-callback": () => { turnstileToken = ""; },
+            "error-callback": (code: string) => { turnstileToken = ""; console.error("[turnstile] error", code); showLoadError(String(code || "error")); },
             "expired-callback": () => { turnstileToken = ""; },
           });
           turnstileEnabled = true;
           if (deep) pendingAutoScan = true;
-        } catch {}
+        } catch (e) { console.error("[turnstile] render failed", e); showLoadError("render"); }
       });
+      // Surface a silent failure (widget never mounted) instead of leaving the user deadlocked.
+      setTimeout(() => {
+        if (box && !box.querySelector("iframe") && !turnstileToken) {
+          console.warn("[turnstile] widget did not mount within 9s - check Rocket Loader / domain allowlist / blockers");
+          showLoadError("did not load");
+        }
+      }, 9000);
     }
     initTurnstile();
   </script>
