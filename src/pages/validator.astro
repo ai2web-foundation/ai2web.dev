@@ -19,31 +19,12 @@ import Base from "../layouts/Base.astro";
         </div>
         <button class="btn btn--primary" type="submit" id="scanBtn">Scan</button>
       </form>
-      <div id="turnstile" style="margin-top:14px"></div>
+      <!-- Turnstile runs in an isolated same-origin iframe (/turnstile) so the widget renders in a
+           clean document, immune to whatever on this page broke its init. The frame postMessages
+           the token, which the page script reads. -->
+      <iframe id="turnstile" src="/turnstile" title="Verification challenge" scrolling="no"
+              style="width:300px;height:66px;border:0;margin-top:14px;color-scheme:normal"></iframe>
       <p class="vscan__hint mono dim" id="uhint"></p>
-      <!-- Canonical Cloudflare Turnstile: define the onload callback, then load api.js with
-           render=explicit so Cloudflare calls us back exactly when turnstile.render is ready. -->
-      <script is:inline>
-        window.__ai2wToken = "";
-        window.onAi2wTurnstile = function () {
-          if (window.__ai2wTsDone) return;
-          window.__ai2wTsDone = true;
-          fetch("/api/config")
-            .then(function (r) { return r.json(); })
-            .then(function (cfg) {
-              if (!cfg || !cfg.turnstileSiteKey || !window.turnstile) return;
-              window.turnstile.render("#turnstile", {
-                sitekey: cfg.turnstileSiteKey,
-                theme: "auto",
-                callback: function (t) { window.__ai2wToken = t; },
-                "expired-callback": function () { window.__ai2wToken = ""; },
-                "error-callback": function () { window.__ai2wToken = ""; },
-              });
-            })
-            .catch(function () {});
-        };
-      </script>
-      <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onAi2wTurnstile&render=explicit" async defer></script>
     </div>
   </section>
 
@@ -151,12 +132,20 @@ import Base from "../layouts/Base.astro";
     const API = "https://validator.ai2web.dev";
     const DIRECTORY = "https://directory.ai2web.dev";
     let scannedUrl = "";
-    // Turnstile token + reset live on window (the widget is rendered by the inline script above).
+    // The Turnstile widget lives in the same-origin /turnstile iframe; it postMessages its token.
+    (window as any).__ai2wToken = "";
+    window.addEventListener("message", (e) => {
+      if (e.origin !== location.origin) return;
+      const d: any = e.data;
+      if (d && typeof d === "object" && "__ai2wTurnstile" in d) (window as any).__ai2wToken = d.__ai2wTurnstile || "";
+    });
     const tsToken = (): string => (window as any).__ai2wToken || "";
     function resetTurnstile() {
-      const w = window as any;
-      try { if (w.turnstile && w.__ai2wTsDone) w.turnstile.reset("#turnstile"); } catch {}
-      w.__ai2wToken = "";
+      (window as any).__ai2wToken = "";
+      try {
+        const f = document.getElementById("turnstile") as HTMLIFrameElement | null;
+        if (f && f.contentWindow) f.contentWindow.location.reload(); // fresh single-use token
+      } catch {}
     }
     const $ = (id: string) => document.getElementById(id)!;
     const esc = (s: unknown) =>
