@@ -45,6 +45,12 @@ export const CHROME_EXT = {
   blurb: "Check any site's AI readiness from your toolbar as you browse. No setup.",
 };
 
+export const WORDPRESS = {
+  name: "AI2Web for WordPress",
+  href: "https://github.com/ai2web-foundation/ai2web-wordpress",
+  blurb: "Auto-generate a manifest for your WordPress or WooCommerce site. No code.",
+};
+
 // Distribution channels for the Get Started section. `badge` is a short lettermark
 // shown in a tinted tile (no remote logos - keeps the page zero-external-request).
 export const CHANNELS = [
@@ -53,7 +59,7 @@ export const CHANNELS = [
   { badge: "php", name: "Packagist", pkg: "ai2web/ai2web", cmd: "composer require ai2web/ai2web", href: "https://packagist.org/packages/ai2web/ai2web" },
   { badge: "C#", name: "NuGet", pkg: "Ai2Web", cmd: "dotnet add package Ai2Web", href: "https://www.nuget.org/packages/Ai2Web" },
   { badge: "go", name: "Go", pkg: "ai2web-go", cmd: "go get github.com/ai2web-foundation/ai2web-go", href: "https://pkg.go.dev/github.com/ai2web-foundation/ai2web-go" },
-  { badge: "wp", name: "WordPress", pkg: "ai2web plugin", cmd: "Install from your WP admin", href: "https://github.com/ai2web-foundation/ai2web-wordpress" },
+  { badge: "rb", name: "RubyGems", pkg: "ai2web", cmd: "gem install ai2web", href: "https://rubygems.org/gems/ai2web" },
 ];
 
 // Last-known total, shown when the build-time fetch is unavailable (e.g. GitHub's

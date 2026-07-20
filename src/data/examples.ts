@@ -20,6 +20,7 @@ npm install @ai2web/server     # /ai2w route handler (Node + Cloudflare)
   { label: "PHP", lang: "bash", code: `composer require ai2web/ai2web` },
   { label: "Go", lang: "bash", code: `go get github.com/ai2web-foundation/ai2web-go` },
   { label: ".NET", lang: "bash", code: `dotnet add package Ai2Web` },
+  { label: "Ruby", lang: "bash", code: `gem install ai2web` },
   { label: "WordPress", lang: "bash", code: `# Install the "AI2Web" plugin from the WordPress admin, then enable it.
 # It serves /ai2w automatically from your posts, products and pages.` },
 ];
@@ -151,6 +152,23 @@ var manifest = Manifest.ForSite("Northwind", "https://northwind.com", "ecommerce
     .Build();
 
 var result = Validator.Validate(manifest);   // Score 100, Tier "Enterprise"`,
+  },
+  {
+    label: "Ruby",
+    lang: "ruby",
+    code: `require "ai2web"
+
+manifest = Ai2Web.ai2web(name: "Northwind", url: "https://northwind.com", type: "ecommerce")
+  .capability("content")
+  .capability("commerce", endpoint: "/ai2w/products", checkout: true)
+  .capability("search", endpoint: "/ai2w/search")
+  .transports(mcp: { enabled: true, endpoint: "/ai2w/mcp" }, rest: { enabled: true })
+  .auth(methods: %w[none oauth2], oauth2: { pkce: true, scopes: ["checkout"] })
+  .consent(requires_user_approval_for: ["purchase"])
+  .contact(support: "help@northwind.com")
+  .build
+
+result = Ai2Web.validate(manifest)   # { score: 100, tier: "Enterprise", ... }`,
   },
   {
     label: "WordPress",
