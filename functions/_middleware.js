@@ -5,6 +5,12 @@
 // pages (parsed from sitemap.xml, with titles read from each page), not hand-declared. Every
 // other request passes straight through to the static site via next().
 
+// Wildcard CORS is INTENTIONAL and safe here: these /ai2w routes are public, unauthenticated,
+// read-only discovery/content APIs meant to be reachable by any AI agent from any origin - that is
+// the whole point of the protocol. No cookies/credentials are used and Access-Control-Allow-
+// Credentials is never set (browsers forbid `*` + credentials), so there is no cross-origin data-
+// leak vector. Do NOT restrict this to a single origin - that would break discovery. Anything
+// closer to an action (the /api/* Pages Functions) is same-origin only, with no ACAO at all.
 const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, OPTIONS",
