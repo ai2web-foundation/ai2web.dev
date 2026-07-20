@@ -5,6 +5,7 @@ export const SITE = {
   repo: "ai2web-foundation/ai2web-spec",
   ghUrl: "https://github.com/ai2web-foundation",
   xUrl: "https://x.com/ai2webdev",
+  email: "hello@ai2web.dev",
 };
 
 // "Featured on" launch badges. These are each platform's OFFICIAL embed SVG, so the
