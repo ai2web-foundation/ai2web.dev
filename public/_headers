@@ -11,6 +11,11 @@
   # challenges.cloudflare.com, and the Product Hunt / Peerlist / Launchpadly badge images), for no
   # benefit (the site uses no SharedArrayBuffer / WASM threads / cross-origin isolation).
   Cross-Origin-Opener-Policy: same-origin
+  # CSP in REPORT-ONLY: measures violations without blocking, so it can't break the site. Sources
+  # reflect what the site actually loads (self, the Turnstile widget, and the launch-badge image
+  # hosts). To enforce later, add nonces/hashes to the Astro inline scripts, drop 'unsafe-inline'
+  # from script-src, then rename this header to Content-Security-Policy.
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.producthunt.com https://peerlist.io https://launchpadly.co https://challenges.cloudflare.com; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
 
 # Immutable, content-hashed build assets
 /_astro/*
