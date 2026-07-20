@@ -9,13 +9,16 @@ interface Props {
   title?: string;
   description?: string;
   path?: string;
+  breadcrumbs?: { name: string; path: string }[];
 }
 const {
   title = "AI2Web - The interoperability layer for AI-enabled websites",
-  description = "Describe your website once. AI2Web makes it understandable and actionable to every AI agent, across MCP, ACP, REST, GraphQL and more, with discovery, validation and governance built in.",
+  description = "Describe your website once. AI2Web makes it understandable to every AI agent across MCP, ACP and REST, with discovery, validation and governance built in.",
   path = "/",
+  breadcrumbs,
 } = Astro.props;
 const canonical = new URL(path, "https://ai2web.dev").href;
+const modified = new Date().toISOString().slice(0, 10);
 ---
 
 <!doctype html>
@@ -29,6 +32,7 @@ const canonical = new URL(path, "https://ai2web.dev").href;
     <meta name="theme-color" content="#08090a" />
 
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AI2Web" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -40,6 +44,7 @@ const canonical = new URL(path, "https://ai2web.dev").href;
 
     <link rel="icon" href="/logo-96.png" type="image/png" sizes="96x96" />
     <link rel="apple-touch-icon" href="/logo-192.png" />
+    <link rel="manifest" href="/manifest.json" />
     <link rel="ai2w" href="/ai2w" />
 
     <script type="application/ld+json" set:html={JSON.stringify({
@@ -49,9 +54,16 @@ const canonical = new URL(path, "https://ai2web.dev").href;
           "@type": "Organization",
           "@id": "https://ai2web.dev/#org",
           name: "AI2Web Foundation",
+          alternateName: "AI2Web",
           url: "https://ai2web.dev/",
           logo: "https://ai2web.dev/logo-512.png",
-          sameAs: ["https://github.com/ai2web-foundation"],
+          description: "AI2Web is an open interoperability layer that makes any website understandable and actionable to AI agents.",
+          sameAs: [
+            "https://github.com/ai2web-foundation",
+            "https://x.com/ai2webdev",
+            "https://www.producthunt.com/products/ai2web",
+            "https://peerlist.io/rolandfarkas/project/ai2web",
+          ],
         },
         {
           "@type": "WebSite",
@@ -61,6 +73,15 @@ const canonical = new URL(path, "https://ai2web.dev").href;
           publisher: { "@id": "https://ai2web.dev/#org" },
         },
         {
+          "@type": "WebPage",
+          "@id": canonical + "#webpage",
+          url: canonical,
+          name: title,
+          description,
+          isPartOf: { "@id": "https://ai2web.dev/#site" },
+          dateModified: modified,
+        },
+        {
           "@type": "SoftwareApplication",
           name: "AI2Web",
           applicationCategory: "DeveloperApplication",
@@ -68,6 +89,17 @@ const canonical = new URL(path, "https://ai2web.dev").href;
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
           url: "https://ai2web.dev/",
         },
+        ...(breadcrumbs && breadcrumbs.length
+          ? [{
+              "@type": "BreadcrumbList",
+              itemListElement: breadcrumbs.map((b, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                name: b.name,
+                item: new URL(b.path, "https://ai2web.dev").href,
+              })),
+            }]
+          : []),
       ],
     })} />
 
@@ -83,8 +115,9 @@ const canonical = new URL(path, "https://ai2web.dev").href;
     </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
     <Header />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <Footer />

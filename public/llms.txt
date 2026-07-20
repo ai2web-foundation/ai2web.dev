@@ -2,7 +2,7 @@
 
 > AI2Web is the open interoperability layer for AI-enabled websites. Describe your site's capabilities once in a manifest at /ai2w, and AI2Web exposes them to AI agents across MCP, ACP, REST, GraphQL, OpenAPI and feeds, with discovery, capability negotiation, validation and a safe, approval-gated action model.
 
-AI2Web is an open protocol, specification and framework, with reference SDKs in TypeScript/JavaScript, PHP, Python, Go and .NET, plus a WordPress plugin. It complements existing agent protocols such as MCP rather than replacing them: the capability model is the durable contract, and discovery can be carried by any neutral anchor.
+AI2Web is an open protocol, specification and framework, with reference SDKs in TypeScript/JavaScript, PHP, Python, Go, .NET and Ruby, plus a WordPress plugin. It complements existing agent protocols such as MCP rather than replacing them: the capability model is the durable contract, and discovery can be carried by any neutral anchor.
 
 ## Documentation
 

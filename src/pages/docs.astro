@@ -30,7 +30,18 @@ const modules = [
 ];
 ---
 
-<Base title="AI2Web Docs: Make Any Website AI-Ready for Agents" path="/docs" description="Practical guide to AI2Web: publish a capability manifest at /ai2w, serve it across MCP, ACP, REST and more, and score your AI readiness. Code examples in every language.">
+<Base title="AI2Web Docs: Make Any Website AI-Ready for Agents" path="/docs" description="AI2Web docs: publish a capability manifest at /ai2w, serve it across MCP, ACP and REST, and score your site's AI readiness. Examples in every language." breadcrumbs={[{ name: "Home", path: "/" }, { name: "Docs", path: "/docs" }]}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Make your website AI-ready with AI2Web",
+    description: "Publish an AI2Web manifest, add the discovery anchor, then validate and connect it to any AI assistant.",
+    step: [
+      { "@type": "HowToStep", position: 1, name: "Publish a manifest", text: "Publish a capability manifest at /ai2w, by hand, via an SDK, or the WordPress plugin.", url: "https://ai2web.dev/docs#start" },
+      { "@type": "HowToStep", position: 2, name: "Add the discovery anchor", text: "Add the required /.well-known/ai2w discovery anchor pointing to the manifest.", url: "https://ai2web.dev/docs#start" },
+      { "@type": "HowToStep", position: 3, name: "Validate and connect", text: "Score the site with the validator, then add your /ai2w/mcp endpoint to any AI assistant.", url: "https://ai2web.dev/docs#start" },
+    ],
+  })} />
   <div class="docs">
     <aside class="docs__side">
       <nav class="toc" aria-label="On this page">

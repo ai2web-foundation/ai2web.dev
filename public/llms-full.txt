@@ -1,0 +1,64 @@
+# AI2Web
+
+> AI2Web is an open interoperability layer that makes any website understandable and actionable to AI agents. A site describes its capabilities once in a single manifest at `/ai2w`, and AI2Web projects that one description to whichever protocol an assistant speaks (MCP, ACP, REST, GraphQL, OpenAPI, feeds), adding the discovery, capability negotiation, validation, governance and analytics that individual protocol specs intentionally leave out.
+
+AI2Web is **not "the MCP for websites."** It is the layer above the transports: one capability model across many agent protocols, so a site does not rebuild for each assistant. It complements MCP rather than replacing it. Stewarded by the AI2Web Foundation; spec is CC-BY 4.0, code is MIT.
+
+## What it is (definition)
+
+AI2Web is a protocol + specification + framework + reference implementations. The durable primitive is the **capability model**: content, commerce, search, actions, events, agent service and more, declared once. Everything else (framework, discovery network, analytics) derives from it.
+
+## Core endpoints
+
+A site publishes:
+
+- `GET /.well-known/ai2w` - required discovery anchor; points to the manifest.
+- `GET /ai2w` - the canonical capability manifest (JSON). Friendly alias: `GET /ai`.
+- `POST /ai2w/negotiate` - agree a capability set + transport with an agent (spec section 5).
+- `GET /ai2w/{module}` - a capability module: `content`, `products`/`commerce`, `search`, `events`, `agent` and others.
+- `POST /ai2w/actions/{name}` - invoke a declared action. High-risk or consent-flagged actions return a preview and require explicit approval before they run.
+- Multi-surface projections (RFC-0015): `GET /llms.txt`, `GET /.well-known/agent.json`.
+
+## The manifest
+
+The `/ai2w` manifest declares: `protocol` ("ai2w"), `version`, `site` (name, url, type), `capabilities` (a map of module -> boolean | object), `transports` (mcp, acp, rest, graphql, feeds), `auth` (methods, oauth2 + PKCE), `consent` (which actions require user approval), optional `actions` (with input schemas, risk, bindings), `identity`, `contact`, `rate_limits`, and v0.2 modules: `governance`, `usage_policy`, `legal`, `knowledge`.
+
+## Capability modules
+
+- **content** - readable pages and articles.
+- **commerce / products / booking / services** - catalog, checkout, reservations.
+- **search** - a query interface over content and catalog.
+- **actions** - declared operations an agent can invoke, each with an input schema and a risk level.
+- **events** - subscribable events (order.shipped, price.drop) via webhook, poll or SSE.
+- **agent_service** - agent-to-agent (A2A) endpoint.
+
+## Safety model
+
+Discovery is read-only and never changes state. Anything sensitive is approval-gated: an action that is high-risk or declares `requires_user_approval` returns a **preview** first; the user approves; then it executes and returns a confirmation with an `audit_ref`. A high-risk action previews even if a manifest tries to declare `requires_user_approval: false`. Authenticated actions use OAuth 2.1 + PKCE, and cross-origin credentials are refused by default.
+
+## SDKs (six languages + WordPress)
+
+All produce the same manifest and reproduce one shared conformance contract:
+
+- TypeScript / JavaScript / React - the `@ai2web/*` npm packages: core, validator, server, mcp-bridge, and adapters for GraphQL, ACP, OpenAPI, React, plus framework adapters for Hono, Astro and Nuxt.
+- Python (`pip install ai2web`), PHP (`composer require ai2web/ai2web`), Go, .NET (`dotnet add package Ai2Web`), Ruby (`gem install ai2web`).
+- WordPress + WooCommerce plugin that auto-generates a manifest.
+
+## Discovery Network + connector
+
+- The **Discovery Network** (`directory.ai2web.dev`) is a public, metadata-only directory. A site registers via a verification-first endpoint: the directory re-fetches and validates the live manifest server-side before listing; submitted data is ignored.
+- The **network connector** (`connector.ai2web.dev/mcp`) is one MCP endpoint that fronts the whole network. Add it once to an assistant to discover and act on AI-ready sites across the network, with tools `find_sites`, `describe_site` and `call_site_action` (plus `search`/`fetch` for ChatGPT-style clients).
+
+## Validator + AI Readiness score
+
+The validator (`ai2web.dev/validator`, or `npx ai2web validate`) scores any site or manifest out of 100 with per-capability checks and a tier (Basic / Standard / Enterprise).
+
+## Links
+
+- Website: https://ai2web.dev
+- Docs: https://ai2web.dev/docs
+- Validator: https://ai2web.dev/validator
+- Specification: https://github.com/ai2web-foundation/ai2web-spec
+- RFCs (0000 to 0011): https://github.com/ai2web-foundation/ai2web-spec/tree/main/rfcs
+- GitHub organization: https://github.com/ai2web-foundation
+- This site's manifest: https://ai2web.dev/.well-known/ai2w

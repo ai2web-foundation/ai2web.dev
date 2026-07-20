@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ai2web.dev/</loc><priority>1.0</priority></url>
-  <url><loc>https://ai2web.dev/docs</loc><priority>0.9</priority></url>
-  <url><loc>https://ai2web.dev/validator</loc><priority>0.9</priority></url>
-  <url><loc>https://ai2web.dev/privacy</loc><priority>0.3</priority></url>
-</urlset>

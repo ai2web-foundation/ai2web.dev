@@ -1,0 +1,7 @@
+# AI2Web security contact (RFC 9116)
+Contact: mailto:security@ai2web.dev
+Contact: mailto:hello@ai2web.dev
+Expires: 2027-07-20T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://ai2web.dev/.well-known/security.txt
+Policy: https://github.com/ai2web-foundation/.github/blob/main/SECURITY.md
