@@ -1,5 +1,7 @@
 # ai2web.dev
 
+[![AI2Web on Launchpadly - Product of the Week (Gold)](https://launchpadly.co/embed/badges/startup/ai2web.svg?variant=product-week-gold)](https://launchpadly.co/startup/ai2web?ref=badge)
+
 The AI2Web marketing site and validator, built with [Astro](https://astro.build) and deployed on Cloudflare Pages.
 
 ```bash
