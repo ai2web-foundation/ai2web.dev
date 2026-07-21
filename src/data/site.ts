@@ -33,6 +33,42 @@ export const LAUNCHES = [
   },
 ];
 
+// "Featured on" directory / backlink badges shown in the footer. Each is the platform's
+// official embed image. To add one: append an entry here AND add its image host to the
+// `img-src` list in public/_headers (the CSP that permits third-party badge images).
+export const DIRECTORY_BADGES = [
+  {
+    name: "Findly.tools",
+    href: "https://findly.tools/ai2web?utm_source=ai2web",
+    img: "https://findly.tools/badges/findly-tools-badge-dark.svg",
+    w: 175, h: 55,
+  },
+  {
+    name: "Nick Launches",
+    href: "https://nicklaunches.com/products/ai2web/?utm_source=ai2web.dev&utm_medium=badge&utm_campaign=featured",
+    img: "https://nicklaunches.com/badges/featured-dark.png",
+    w: 244, h: 56,
+  },
+  {
+    name: "Huzzler",
+    href: "https://huzzler.so/products/5X1DJk9bS3/ai2web?utm_source=huzzler_product_website&utm_medium=badge&utm_campaign=free_listing",
+    img: "https://huzzler.so/assets/images/embeddable-badges/featured.png",
+    w: 159, h: 55,
+  },
+  {
+    name: "KittyLaunch",
+    href: "https://kittylaunch.com/p/ai2web",
+    img: "https://kittylaunch.com/api/public/badges/launch_badge.svg?theme=dark&name=AI2Web",
+    w: 280, h: 55,
+  },
+  {
+    name: "Verified DR",
+    href: "https://verifieddr.com/website/ai2web-dev",
+    img: "https://verifieddr.com/badge/ai2web-dev-dark.svg?metric=truedr",
+    w: 220, h: 68,
+  },
+];
+
 export const NAV = [
   { label: "Docs", href: "/docs" },
   { label: "Spec", href: "https://github.com/ai2web-foundation/ai2web-spec" },
