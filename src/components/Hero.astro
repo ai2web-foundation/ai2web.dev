@@ -29,8 +29,8 @@
       </p>
     </div>
 
-    <div class="hero__vis reveal" data-d="2" aria-hidden="true">
-      <div class="panel card">
+    <div class="hero__vis reveal" data-d="2">
+      <div class="panel card" aria-hidden="true">
         <div class="panel__bar">
           <span class="dot"></span><span class="dot"></span><span class="dot"></span>
           <span class="panel__url mono">GET /ai2w</span>
@@ -65,6 +65,11 @@
           <span class="chk">✓</span>
         </div>
       </div>
+
+      <!-- Launchpadly - AI2Web (product-week-gold) -->
+      <a class="lp-badge" href="https://launchpadly.co/startup/ai2web?ref=badge" target="_blank" rel="noopener noreferrer" data-launchpadly-badge="ai2web" data-launchpadly-badge-variant="product-week-gold">
+        <img src="https://launchpadly.co/embed/badges/startup/ai2web.svg?variant=product-week-gold" alt="AI2Web on Launchpadly - Product of the Week (Gold)" width="280" height="52" />
+      </a>
     </div>
   </div>
 </section>
@@ -117,6 +122,10 @@
   .score__meta strong { font-size: 0.92rem; font-weight: 600; }
   .score__meta span { font-size: 0.76rem; }
   .chk { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-glow); color: var(--accent-bright); font-size: 0.9rem; }
+
+  /* Launchpadly award badge, directly under the readiness panel */
+  .lp-badge { display: block; width: fit-content; margin: 18px auto 0; }
+  .lp-badge img { display: block; border: 0; max-width: 100%; height: auto; }
 
   /* Streaming "readiness scan" under the code sample */
   .panel__scan {
