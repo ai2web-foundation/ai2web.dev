@@ -1,5 +1,5 @@
 ---
-import { NAV, SITE, DIRECTORY_BADGES } from "../data/site";
+import { NAV, SITE } from "../data/site";
 const year = 2026;
 ---
 
@@ -43,15 +43,6 @@ const year = 2026;
 
     <hr class="rule" />
 
-    <div class="ft__badges" aria-label="Featured on">
-      <span class="ft__badges-label mono">Featured on</span>
-      {DIRECTORY_BADGES.map((b) => (
-        <a class="ft__badge" href={b.href} target="_blank" rel="noopener noreferrer">
-          <img src={b.img} alt={`AI2Web on ${b.name}`} width={b.w} height={b.h} loading="lazy" />
-        </a>
-      ))}
-    </div>
-
     <div class="ft__legal">
       <span class="dim">AI2Web Foundation · spec CC-BY 4.0 · code MIT · &copy; {year}</span>
       <button class="ft__theme" data-theme-toggle type="button">Toggle theme</button>
@@ -81,13 +72,6 @@ const year = 2026;
   .ft__legal { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px 30px; flex-wrap: wrap; font-size: 0.85rem; }
   .ft__theme { background: none; border: 0; color: var(--text-faint); cursor: pointer; font: inherit; }
   .ft__theme:hover { color: var(--text); }
-
-  /* Featured-on directory badges. */
-  .ft__badges { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding-block: 26px 4px; }
-  .ft__badges-label { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
-  .ft__badge { display: inline-flex; opacity: 0.7; transition: opacity .15s ease; }
-  .ft__badge:hover { opacity: 1; }
-  .ft__badge img { height: 34px; width: auto; display: block; border-radius: var(--r-sm); }
 
   .ft__mark {
     position: absolute; left: 50%; bottom: -0.22em; transform: translateX(-50%);
