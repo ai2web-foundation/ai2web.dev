@@ -47,7 +47,10 @@ export const CHROME_EXT = {
 
 export const WORDPRESS = {
   name: "AI2Web for WordPress",
-  href: "https://github.com/ai2web-foundation/ai2web-wordpress",
+  // Live on the WordPress.org plugin directory - link there, not GitHub, so visitors can
+  // install it in one click from their own wp-admin.
+  href: "https://wordpress.org/plugins/ai2web/",
+  repo: "https://github.com/ai2web-foundation/ai2web-wordpress",
   blurb: "Auto-generate a manifest for your WordPress or WooCommerce site. No code.",
 };
 
